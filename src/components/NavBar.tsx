@@ -110,7 +110,7 @@ export function NavBar() {
           </NavigationMenuContent>
         </NavigationMenuItem>
         <NavigationMenuItem>
-          <Link href="https://github.com/MolinDeng/cgai.gatech" legacyBehavior passHref>
+          <Link href="https://github.com/cg-gatech/cgai" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               <GithubIcon className="w-4 h-4 mr-2" />
               Github page
