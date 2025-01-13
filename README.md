@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CS 8803 CGAI
+
+Welcome to the Course Website project! This README provides step-by-step instructions for installing Node.js and npm, as well as setting up a Next.js project. Follow the instructions for your operating system to get started.
+
+---
+
+## Prerequisites
+
+1. **Basic Requirements**:
+   - A computer running macOS or Windows.
+   - An internet connection.
+2. **Text Editor**:
+   - Install a code editor like [Visual Studio Code](https://code.visualstudio.com/).
+
+---
+
+## Installing Node.js and npm
+
+Node.js is a JavaScript runtime, and npm (Node Package Manager) comes with it. You’ll need both to work with React/Next.js projects.
+
+### macOS
+
+1. **Install Homebrew (if not already installed)**:
+   Open Terminal and run:
+
+   ```bash
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+
+2. **Install Node.js**:
+   Using Homebrew, run:
+
+   ```bash
+   brew install node
+   ```
+
+   This will install both Node.js and npm.
+
+3. **Verify Installation**:
+   - Check Node.js version:
+
+     ```bash
+     node -v
+     ```
+
+   - Check npm version:
+
+     ```bash
+     npm -v
+     ```
+
+### Windows
+
+1. **Download Node.js**:
+   - Visit [Node.js Downloads](https://nodejs.org/).
+   - Download the **LTS** version (recommended for most users).
+
+2. **Run the Installer**:
+   - Double-click the downloaded file and follow the installation wizard.
+   - Ensure that you check the box to add Node.js to the system PATH.
+
+3. **Verify Installation**:
+   - Open Command Prompt or PowerShell.
+   - Check Node.js version:
+
+     ```bash
+     node -v
+     ```
+
+   - Check npm version:
+
+     ```bash
+     npm -v
+     ```
+
+---
 
 ## Getting Started
 
-First, run the development server:
+The tech stack for this project includes
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Next.js](https://nextjs.org/)
+- [React Three Fiber](https://r3f.docs.pmnd.rs/getting-started/introduction)
+- [Three.js](https://threejs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+1. Install dev dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   ```bash
+   npm install
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Start the development server:
 
-## Learn More
+   ```bash
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. Open your browser and go to:`http://localhost:3000`. You should see the class landing page.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Additional Information and Resources
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Three Fiber Documentation](https://r3f.docs.pmnd.rs/getting-started/introduction)
+- [Three.js Documentation](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)
+- [ShaderToy](https://www.shadertoy.com/)
