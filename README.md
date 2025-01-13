@@ -99,6 +99,8 @@ The tech stack for this project includes
 
 3. Open your browser and go to:`http://localhost:3000`. You should see the class landing page.
 
+4. After you have completed the assignment, for exmaple, Assignment 1, you can click on the link named `Assignment 1` under the `Assignments` section. Or, You can just go to `http://localhost:3000/assignment/a1` to see the result of the assignment.
+
 ---
 
 ## Additional Information and Resources
