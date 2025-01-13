@@ -7,8 +7,7 @@ Welcome to the Course starter code project! This README provides step-by-step in
 ## Prerequisites
 
 1. **Basic Requirements**:
-   - A computer running macOS or Windows.
-   - An internet connection.
+   - A computer running macOS or Windows or Linux.
 2. **Text Editor**:
    - Install a code editor like [Visual Studio Code](https://code.visualstudio.com/).
 
@@ -61,6 +60,37 @@ Node.js is a JavaScript runtime, and npm (Node Package Manager) comes with it. Y
 
 3. **Verify Installation**:
    - Open Command Prompt or PowerShell.
+   - Check Node.js version:
+
+     ```bash
+     node -v
+     ```
+
+   - Check npm version:
+
+     ```bash
+     npm -v
+     ```
+
+### Linux
+
+1. **Install Node.js using NodeSource**:
+   - Open your terminal.
+   - Run the following commands to add the NodeSource repository and install Node.js:
+
+     ```bash
+     curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+     sudo apt-get install -y nodejs
+     ```
+
+2. **Install Build Tools (optional but recommended)**:
+   - For compiling native modules, install build-essential:
+
+     ```bash
+     sudo apt-get install -y build-essential
+     ```
+
+3. **Verify Installation**:
    - Check Node.js version:
 
      ```bash
