@@ -141,3 +141,10 @@ No worries! You don't need to know them to complete the assignments. You can jus
 - [React Three Fiber Documentation](https://r3f.docs.pmnd.rs/getting-started/introduction)
 - [Three.js Documentation](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)
 - [ShaderToy](https://www.shadertoy.com/)
+
+## VSCode Extensions
+
+You may find the following VSCode extensions helpful:
+
+- [WebGL GLSL Editor](https://marketplace.visualstudio.com/items?itemName=raczzalan.webgl-glsl-editor)
+- [Shader languages support for VS Code](https://marketplace.visualstudio.com/items?itemName=slevesque.shader)
