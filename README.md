@@ -146,6 +146,8 @@ Read these documents if you are interested in the technical details behind these
 - [Tailwind CSS](https://tailwindcss.com/)
 - [ShaderToy](https://www.shadertoy.com/)
 
+---
+
 ## VSCode Extensions
 
 You may find the following VSCode extensions helpful:
