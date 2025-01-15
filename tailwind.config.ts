@@ -53,7 +53,7 @@ const config: Config = {
       },
       backgroundImage: {
         'robot-bg':
-          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/landing_robot.jpg')",
+          "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/background.jpg')",
       },
       borderRadius: {
         lg: 'var(--radius)',
