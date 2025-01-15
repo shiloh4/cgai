@@ -1,13 +1,13 @@
 # CS 8803/4803 Computer Graphics in AI Era Starter Code
 
-Welcome to the Course starter code project! This README provides step-by-step instructions for installing Node.js and npm, as well as setting up a Next.js project. Follow the instructions for your operating system to get started.
+Welcome to the CGAI starter code repository! This README provides step-by-step instructions for running your first WebGL graphics demo by installing Node.js, npm, as well as setting up a Next.js project. Follow the instructions for your operating system to get started.
 
 ---
 
 ## Prerequisites
 
 1. **Basic Requirements**:
-   - A computer running macOS or Windows or Linux.
+   - A computer running macOS, Windows, or Linux.
 2. **Text Editor**:
    - Install a code editor like [Visual Studio Code](https://code.visualstudio.com/).
 
