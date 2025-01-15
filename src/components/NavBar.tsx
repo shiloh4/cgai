@@ -18,9 +18,14 @@ import Image from 'next/image';
 
 const tutorials: { title: string; href: string; description: string }[] = [
   {
-    title: 'Shader basics',
-    href: '/tutorial/shader-basics',
-    description: 'Rendering a simple shader',
+    title: 'Shader basis',
+    href: '/tutorial/shader-basis',
+    description: 'Simple GLSL shader',
+  },
+  {
+    title: 'SDF basis',
+    href: '/tutorial/sdf-basis',
+    description: 'Simple 2D SDF shader',
   },
   {
     title: 'More...',
@@ -126,7 +131,7 @@ export function NavBar() {
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               <Image
                 className="mr-2 invert"
-                src="/cg4ai_logo3.png"
+                src="/cgai_logo.png"
                 alt="CGAI logomark"
                 width={16}
                 height={16}

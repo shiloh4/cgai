@@ -9,7 +9,7 @@ const Logo: React.FC = () => {
         href="/"
         rel="noopener noreferrer"
       >
-        <Image src="/cg4ai_logo3.png" alt="CGAI logomark" width={20} height={20} />
+        <Image src="/cgai_logo.png" alt="CGAI logomark" width={20} height={20} />
         CGAI
       </a>
     </div>
