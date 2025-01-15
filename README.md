@@ -110,14 +110,15 @@ Node.js is a JavaScript runtime, and npm (Node Package Manager) comes with it. Y
 
 After installing node.js and npm, we are ready to download the source code and setup our first demo:
 
-1. Create a folder for your starter code and name it "cgai-starter-code" (or any name you like). Clone the starter code to the folder:
+1. Clone the starter code to your computer:
    ```bash
    git clone https://github.com/cg-gatech/cgai.git
    ```
    
-2. Install dev dependencies under your starter code folder:
+2. Install dev dependencies under your cgai starter code folder:
 
    ```bash
+   cd cgai
    npm install
    ```
 
