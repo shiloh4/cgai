@@ -108,15 +108,7 @@ Node.js is a JavaScript runtime, and npm (Node Package Manager) comes with it. Y
 
 ## Getting Started
 
-The tech stack for this project includes
-
-- [Next.js](https://nextjs.org/)
-- [React Three Fiber](https://r3f.docs.pmnd.rs/getting-started/introduction)
-- [Three.js](https://threejs.org/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/)
-
-Read these documents if you are interested in the technical details behind these frameworks. To run your starter code, you only need to follow the following steps.
+Run the following steps to install our starter code.
 
 1. Install dev dependencies:
 
@@ -136,11 +128,15 @@ Read these documents if you are interested in the technical details behind these
 
 ---
 
-## Additional Information and Resources
+## Additional Documents:
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [React Three Fiber Documentation](https://r3f.docs.pmnd.rs/getting-started/introduction)
-- [Three.js Documentation](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene)
+Read these documents if you are interested in the technical details behind these frameworks. 
+
+- [Next.js](https://nextjs.org/)
+- [React Three Fiber](https://r3f.docs.pmnd.rs/getting-started/introduction)
+- [Three.js](https://threejs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
 - [ShaderToy](https://www.shadertoy.com/)
 
 ## VSCode Extensions
