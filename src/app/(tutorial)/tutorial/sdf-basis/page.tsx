@@ -4,21 +4,24 @@ import { Suspense, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-import vertexShader from '@/shaders/common/vertex.glsl';
-import fragmentShader from '@/shaders/uv-screen/fragment.glsl';
+import useDevicePixelRatio from '@/hooks/useDevicePixelRatio';
 
-const Mesh = ({ dpr }: { dpr: number }) => {
+import vertexShader from '@/shaders/common/vertex.glsl';
+import fragmentShader from './fragment.glsl';
+
+const Test = () => {
   const { viewport } = useThree();
+  const dpr = useDevicePixelRatio();
   const uniforms = useRef({
-    uTime: { value: 0 },
-    uResolution: {
+    u_time: { value: 0 },
+    u_resolution: {
       value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr),
     },
   }).current;
 
   useFrame((_, delta) => {
-    uniforms.uTime.value += delta;
-    uniforms.uResolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
+    uniforms.u_time.value += delta;
+    uniforms.u_resolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
   });
 
   return (
@@ -34,11 +37,10 @@ const Mesh = ({ dpr }: { dpr: number }) => {
 };
 
 export default function TestPage() {
-  const dpr = 1;
   return (
     <Canvas
       orthographic
-      dpr={dpr}
+      // dpr={1}
       camera={{ position: [0, 0, 6] }}
       style={{
         position: 'fixed',
@@ -49,7 +51,7 @@ export default function TestPage() {
       }}
     >
       <Suspense fallback={null}>
-        <Mesh dpr={dpr} />
+        <Test />
       </Suspense>
     </Canvas>
   );
