@@ -1,4 +1,4 @@
-# CS 8803 CGAI
+# CS 8803/4803 Computer Graphics in AI Era Starter Code
 
 Welcome to the Course starter code project! This README provides step-by-step instructions for installing Node.js and npm, as well as setting up a Next.js project. Follow the instructions for your operating system to get started.
 
