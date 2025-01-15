@@ -127,7 +127,7 @@ export function NavBar() {
               <Image
                 className="mr-2 invert"
                 src="/cg4ai_logo3.png"
-                alt="CG for AI logomark"
+                alt="CGAI logomark"
                 width={16}
                 height={16}
               />
