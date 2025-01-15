@@ -71,6 +71,7 @@ Node.js is a JavaScript runtime, and npm (Node Package Manager) comes with it. Y
      ```bash
      npm -v
      ```
+     (When running npm, make sure to turn on the running scripts policy. If your terminal shows an error of "npm.psl cannot be loaded because running scripts is disabled on this system...," run the following command as the administrator in PowerShell: "Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass" and then run the npm command again)
 
 ### Linux
 
