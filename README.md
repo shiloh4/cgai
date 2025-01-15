@@ -106,25 +106,30 @@ Node.js is a JavaScript runtime, and npm (Node Package Manager) comes with it. Y
 
 ---
 
-## Getting Started
+## Running the CGAI starter code
 
-Run the following steps to install our starter code.
+After installing node.js and npm, we are ready to download the source code and setup our first demo:
 
-1. Install dev dependencies:
+1. Create a folder for your starter code and name it "cgai-starter-code" (or any name you like). Clone the starter code to the folder:
+   ```bash
+   git clone https://github.com/cg-gatech/cgai.git
+   ```
+   
+2. Install dev dependencies under your starter code folder:
 
    ```bash
    npm install
    ```
 
-2. Start the development server:
+3. Start the development server:
 
    ```bash
    npm run dev
    ```
 
-3. Open your browser and go to:`http://localhost:3000`. You should see the class landing page.
+4. Open your browser and go to:`http://localhost:3000`. You should see the class landing page.
 
-4. After you have completed the assignment, for exmaple, Assignment 1, you can click on the link named `Assignment 1` under the `Assignments` section. Or, You can just go to `http://localhost:3000/assignment/a1` to see the result of the assignment.
+5. After you have completed the assignment, for exmaple, Assignment 1, you can click on the link named `Assignment 1` under the `Assignments` section. Or, You can just go to `http://localhost:3000/assignment/a1` to see the result of the assignment.
 
 ---
 
