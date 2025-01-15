@@ -8,8 +8,9 @@ Welcome to the CGAI starter code repository! This README provides step-by-step i
 
 1. **Basic Requirements**:
    - A computer running macOS, Windows, or Linux.
-2. **Text Editor**:
-   - Install a code editor like [Visual Studio Code](https://code.visualstudio.com/).
+   - A git system on your computer (read the git tutorial links from our Canvas mainpage if you are unfamiliar with using git).
+2. **Programming IDE**:
+   - A programming IDE or text editor like [Visual Studio Code](https://code.visualstudio.com/).
 
 ---
 
