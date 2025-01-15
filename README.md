@@ -115,7 +115,7 @@ The tech stack for this project includes
 - [TypeScript](https://www.typescriptlang.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
-No worries! You don't need to know them to complete the assignments. You can just focus on the assignments.
+Read these documents if you are interested in the technical details behind these frameworks. To run your starter code, you only need to follow the following steps.
 
 1. Install dev dependencies:
 
