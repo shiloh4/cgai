@@ -13,7 +13,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
-import { GithubIcon, GitlabIcon } from 'lucide-react';
+import { GithubIcon } from 'lucide-react';
 import Image from 'next/image';
 
 const tutorials: { title: string; href: string; description: string }[] = [
