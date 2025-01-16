@@ -1,3 +1,6 @@
+// This tutorial code was implemented based on the shader: 
+// https://www.shadertoy.com/view/3ltSW2
+
 // The MIT License
 // Copyright © 2020 Inigo Quilez
 // Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -11,33 +14,41 @@
 uniform vec2 iResolution;
 uniform vec2 iMouse;
 
-float sdCircle(in vec2 p, in float r)
+float sdf_circle(vec2 p, vec2 c, float r)
 {
-    return length(p) - r;
+    return length(p - c) - r;
 }
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
-    vec2 p = (2.0 * fragCoord - iResolution.xy) / iResolution.y;
-    // vec2 m = (2.0 * iMouse.xy - iResolution.xy) / iResolution.y;
-    // iMouse is [-1, 1] x [-1, 1]
-    vec2 m = vec2(iMouse.x * iResolution.x / iResolution.y, iMouse.y);
+    vec2 p = (2.0 * fragCoord - iResolution.xy) / iResolution.y;    // p's range is between (-aspect_ratio,-1) to (+aspect_ratio,+1)
+    vec2 c = vec2(0.0, 0.0);
+    float r = 0.2;
+    float d = sdf_circle(p, c, r);
 
-    float d = sdCircle(p, 0.5);
+    // our coloring implementation
+    vec3 color = vec3(0.0, 0.0, 0.0);
 
-	// coloring
-    vec3 col = (d > 0.0) ? vec3(0.9, 0.6, 0.3) : vec3(0.65, 0.85, 1.0);
-    col *= 1.0 - exp(-6.0 * abs(d));
-    col *= 0.8 + 0.2 * cos(150.0 * d);
-    col = mix(col, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
+    // strategy 1
+    // color = vec3(abs(d/3.0));
 
-    {
-        d = sdCircle(m, 0.5);
-        col = mix(col, vec3(1.0, 1.0, 0.0), 1.0 - smoothstep(0.0, 0.005, abs(length(p - m) - abs(d)) - 0.0025));
-        col = mix(col, vec3(1.0, 1.0, 0.0), 1.0 - smoothstep(0.0, 0.005, length(p - m) - 0.015));
-    }
+    // strategy 2
+    // float b = 1.0;
+    // if(abs(d) < 0.005){
+    //     b = 0.0;
+    // }
+    // color = vec3(b, b, b);
 
-    fragColor = vec4(col, 1.0);
+    // strategy 3
+    // color = vec3(exp(-20.0*abs(d)), 1.0, 1.0);
+
+	// ShaderToy coloring implementation
+    color = (d > 0.0) ? vec3(0.9, 0.6, 0.3) : vec3(0.65, 0.85, 1.0);
+    color *= 1.0 - exp(-6.0 * abs(d));
+    color *= 0.8 + 0.2 * sin(100.0 * d);
+    color = mix(color, vec3(1.0), 1.0 - smoothstep(0.0, 0.01, abs(d)));
+
+    fragColor = vec4(color, 1.0);
 }
 
 void main()

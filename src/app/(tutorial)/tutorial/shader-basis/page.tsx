@@ -5,20 +5,20 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
 import vertexShader from '@/shaders/common/vertex.glsl';
-import fragmentShader from '@/shaders/uv-screen/fragment.glsl';
+import fragmentShader from './fragment.glsl';
 
 const Mesh = ({ dpr }: { dpr: number }) => {
   const { viewport } = useThree();
   const uniforms = useRef({
-    uTime: { value: 0 },
-    uResolution: {
+    iTime: { value: 0 },
+    iResolution: {
       value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr),
     },
   }).current;
 
   useFrame((_, delta) => {
-    uniforms.uTime.value += delta;
-    uniforms.uResolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
+    uniforms.iTime.value += delta;
+    uniforms.iResolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
   });
 
   return (
