@@ -10,18 +10,20 @@ import vertexShader from '@/shaders/common/vertex.glsl';
 import fragmentShader from './fragment.glsl';
 
 const Test = () => {
-  const { viewport } = useThree();
+  const { viewport, pointer, mouse } = useThree();
   const dpr = useDevicePixelRatio();
   const uniforms = useRef({
-    u_time: { value: 0 },
-    u_resolution: {
+    iTime: { value: 0 },
+    iResolution: {
       value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr),
     },
+    iMouse: { value: new THREE.Vector2(0, 0) },
   }).current;
 
   useFrame((_, delta) => {
-    uniforms.u_time.value += delta;
-    uniforms.u_resolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
+    uniforms.iTime.value += delta;
+    uniforms.iResolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
+    uniforms.iMouse.value.set(mouse.x, mouse.y);
   });
 
   return (
