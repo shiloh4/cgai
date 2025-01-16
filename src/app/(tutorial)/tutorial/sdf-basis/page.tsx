@@ -10,7 +10,7 @@ import vertexShader from '@/shaders/common/vertex.glsl';
 import fragmentShader from './fragment.glsl';
 
 const Test = () => {
-  const { viewport, pointer, mouse } = useThree();
+  const { viewport, mouse } = useThree();
   const dpr = useDevicePixelRatio();
   const uniforms = useRef({
     iTime: { value: 0 },
