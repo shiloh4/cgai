@@ -4,8 +4,6 @@ import { Suspense, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
 
-import useDevicePixelRatio from '@/hooks/useDevicePixelRatio';
-
 import vertexShader from '@/shaders/common/vertex.glsl';
 import fragmentShader from './fragment.glsl';
 import useDevicePixelRatio from '@/hooks/useDevicePixelRatio';
