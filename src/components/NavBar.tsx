@@ -44,7 +44,7 @@ const assignments: { title: string; href: string; description: string }[] = [
 
 const shaderToys: { title: string; href: string; description: string }[] = [
   {
-    title: 'Raymarching - Primitives ',
+    title: 'Raymarching - Primitives',
     href: 'https://www.shadertoy.com/view/Xds3zN',
     description: 'A set of raymarched primitives by Inigo Quilez',
   },
