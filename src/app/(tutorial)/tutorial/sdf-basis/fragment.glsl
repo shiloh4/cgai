@@ -39,7 +39,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     // circle
     // float d = sdf_circle(p, c, r);
 
-    // rotating box
+    // // rotating box
     vec2 b = vec2(0.2, 0.3);
     float d = sdf_box(p, iTime, b);
 
