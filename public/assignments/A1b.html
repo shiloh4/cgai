@@ -1,0 +1,149 @@
+<style>
+    /* Custom styles for headings */
+    .h1-custom {
+        font-size: 2.25rem; /* equivalent to text-4xl */
+        font-weight: 700; /* equivalent to font-bold */
+        margin-bottom: 1.5rem; /* equivalent to mb-6 */
+    }
+
+    .h2-custom {
+        font-size: 1.5rem; /* equivalent to text-2xl */
+        font-weight: 600; /* equivalent to font-semibold */
+        margin-top: 1.5rem; /* equivalent to mt-6 */
+        margin-bottom: 1rem; /* equivalent to mb-4 */
+    }
+
+    .h3-custom {
+        font-size: 1.25rem; /* equivalent to text-xl */
+        font-weight: 500; /* equivalent to font-medium */
+        margin-top: 1rem; /* equivalent to mt-4 */
+        margin-bottom: 0.5rem; /* equivalent to mb-2 */
+    }
+
+    /* Styling for code elements */
+    .code-inline {
+        font-family: 'Fira Code', Consolas, 'Courier New', monospace;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    .link-inline {
+        text-decoration: underline;  /* Ensures the links are underlined */
+        color: #1d4ed8;              /* Sets the blue color for the links */
+        font-family: 'Fira Code', Consolas, 'Courier New', monospace;
+        font-size: 1.1rem;
+        font-weight: bold;
+    }
+
+    /* Fixing the problem with ul and li elements */
+    ul {
+        list-style-type: disc;  /* Ensures the default bullet style */
+        margin-left: 2rem;      /* Adds left indentation for the list */
+        padding-left: 1.5rem;   /* Adds extra padding inside the list */
+    }
+
+    li {
+        margin-bottom: 0.5rem; /* Adds space between list items */
+    }
+
+</style>
+
+<h1 class="h1-custom">
+    Assignment 1B: Neural Implicit Surface
+</h1>
+
+<p class="mb-4">
+    Welcome to the second part of our exploration of SDF! In this section, you will continue practicing coding with implicit functions, this time incorporating neural networks as your new friend! The main task for this assignment consists of two steps: first, you will construct and train a neural SDF model in Python using a Colab Jupyter Notebook. Then, you will render this model using GLSL in our WebGL shader. You will be working on both aspects—neural network training and shader-based rendering. Let's get started!
+</p>
+
+<h2 class="h2-custom">Reading</h2>
+<p class="mb-4">
+    Before diving into our code, you may refer to our course slides as well as the supplementary reading materials to get a comprehensive understanding of SDF and ray marching. Here is the reading list:
+</p>
+
+<ul class="list-disc pl-8 mb-4">
+    <li>Course Slides on SDF Representation and Neural Implicit Surface</li>
+    <li><a href="https://arxiv.org/abs/1901.05103" class="link-inline">DeepSDF: Learning Continuous Signed Distance Functions for Shape Representation
+    </a></li>
+    <li><a href="https://www.youtube.com/watch?v=8pwXpfi-0bU" class="link-inline">A Haphazard Tutorial for making Neural SDFs in Shadertoy</a></li>
+    <li><a href="https://www.shadertoy.com/view/wtVyWK" class="link-inline">Neural Stanford Bunny on ShaderToy</a></li>
+</ul>
+
+<h2 class="h2-custom">Starter Code</h2>
+<p>
+    Please visit the following GitHub repository to get our latest starter code: <a href="https://github.com/cg-gatech/cgai" class="link-inline">https://github.com/cg-gatech/cgai</a>. 
+    Make sure you can access the default CGAI web page after starting the npm server. The starter code for this assignment is located in the folder <code class="code-inline">src/app/(assignment)/assignment/A1b</code>. This folder contains several files, including the main page <code class="code-inline">page.tsx</code>, the Jupyter notebook file <code class="code-inline">neural_sdf.ipynb</code>, and the GLSL shader <code class="code-inline">fragment.glsl</code>. Your implementation will focus on <code class="code-inline">neural_sdf.ipynb</code> and <code class="code-inline">fragment.glsl</code>.
+</p>
+
+To view the default initial effect for this assignment, you can either use the navigation bar by clicking Assignments and then Assignment 1b, or directly access the URL: <a href="http://localhost:3000/assignment/A1b" class="link-inline">http://localhost:3000/assignment/A1b</a> (Note that the port number may vary depending on the available ports on your local computer). After successfully completing the setup, you should see a blank window.
+
+<h2 class="h2-custom">Requirements</h2>
+<p class="mb-4">
+For this assignment, you are expected to implement two main components to generate a neural SDF and then render it in a GLSL environment with ray marching. We will briefly discuss each component as follows.
+</p>
+
+<h3 class="h3-custom">Step 1: Neural SDF Creation</h3>
+<p class="mb-4">
+[TODO]
+</p>
+
+<h3 class="h3-custom">Step 2: Copy Network Weights to Shader</h3>
+<p class="mb-4">
+[TODO]
+</p>
+
+<h3 class="h3-custom">Step 3: Scene SDF</h3>
+<p class="mb-4">
+In this step, you are tasked with constructing the scene's SDF using the two neural SDF objects. You will need to position these two objects appropriately according to the instructions in the starter code comment. The final SDF function should return the minimum distance to any neural implicit surface in the scene.
+</p>
+
+<h3 class="h3-custom">Step 4: Ray Marching</h3>
+<p class="mb-4">
+In this step, you are asked to implement the ray marching algorithm to render the SDF scene. You are allowed to reuse your previous implementation in A1a for this function.
+</p>
+
+<h3 class="h3-custom">Step 5: Normal Calculation</h3>
+<p class="mb-4">
+In this step, you will calculate the surface normal at a given point using the finite difference method. You are allowed to reuse your previous implementation in A1a for this function.
+</p>
+
+<h3 class="h3-custom">Step 6: Lighting and Coloring</h3>
+<p class="mb-4">
+In this step, you are asked to color the objects to achieve realistic lighting effects. You are also tasked to assign a unique color to each neural SDF object in the scene based on its position or type. <em>We do not ask for a perfect match of our given video. You may pick any color you like for the rendering of these four objects.</em>
+
+Once you have implemented all these steps, you should be able to observe the two neural SDF models as shown in the video below. 
+</p>
+
+<video controls autoplay loop muted>
+    <source src="/assignments/a1a-ref.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<h2 class="h2-custom">Creative Expression</h2>
+In the Creative Expression section of this assignment, you are encouraged to train your customized neural SDF model. You may either use one of the meshes provided in our starter code, or you may download a new mesh and train its neural SDF model in Colab. You may adjust the size of the network (e.g., the number of layers, the number of weights, etc.) to improve the appearance of your neural SDF model. The creative expression theme for this assignment is <strong>A Tangible Network</strong>.
+
+<h2 class="h2-custom">Submission</h2>
+<ul class="list-disc pl-8 mb-4">
+    <li>Your source code <code class="code-inline">neural_sdf.ipynb</code> and <code class="code-inline">fragment.glsl</code></li>
+    <li>Your default ray-marching video after completing the six steps</li>
+    <li>Your customized video with your own neural SDF objects for creative expression</li>
+    <li>A concise technical explanation of your implementation</li>
+</ul>
+
+<h2 class="h2-custom">Grading</h2>
+<p>This assignment is worth a total of 8 points, with the grading criteria outlined as follows:</p>
+<ul class="list-disc pl-8 mb-4">
+    <li>
+        <strong>Technical Contribution (6 points):</strong> The core of the grading is based on the correct implementation of noise functions. The distribution of points is as follows:
+        <ul class="list-disc pl-8 mb-4">
+            <li>Step 1: 4 points </li>
+            <li>Step 2-6: 3 points </li>
+        </ul>
+    </li>
+    <li>
+        <strong>Creative Expression (1 point):</strong> This aspect focuses on your ability to create new SDF scenes with ray marching.
+    </li>
+</ul>
+
+<h2 class="h2-custom">Sharing Your Work</h2>
+<p>You are encouraged to share your graphical work with the class. If you want to do so, please upload your image to the Ed Discussion post <strong>A1 Gallery: A Tangible Network</strong>. This is an excellent opportunity to engage with your peers and gain recognition for your work. Share with us the blobby world you create!</p>
