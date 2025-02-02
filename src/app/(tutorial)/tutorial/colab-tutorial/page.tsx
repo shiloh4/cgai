@@ -8,7 +8,7 @@ export default function AssignmentPage() {
   const [htmlContent, setHtmlContent] = useState('');
 
   useEffect(() => {
-    fetch('/assignments/A1b.html')
+    fetch('/assignments/colab_tutorial.html')
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
