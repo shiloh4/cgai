@@ -32,12 +32,14 @@ float sdfBunny(vec3 p)
     p = rotate(p, vec3(1., 0., 0.), PI / 2.);
     p = rotate(p, vec3(0., 0., 1.), PI / 2. + PI / 1.);
 
-    //sdf is undefined outside the unit sphere, uncomment to witness the abominations
+    // sdf is undefined outside the unit sphere, uncomment to witness the abominations
     if(length(p) > 1.0)
     {
         return length(p) - 0.9;
     }
-    //// Network Weights for Bunny
+
+    //// neural network weights for the bunny 
+
     vec4 f0_0=sin(p.y*vec4(1.74,-2.67,1.91,-1.93)+p.z*vec4(2.15,-3.05,.50,-1.32)+p.x*vec4(2.47,.30,-2.00,-2.75)+vec4(1.31,6.89,-8.25,.15));
     vec4 f0_1=sin(p.y*vec4(-.72,-3.13,4.36,-3.50)+p.z*vec4(3.39,3.58,-4.52,-1.10)+p.x*vec4(-1.02,-2.90,2.23,-.62)+vec4(1.61,-.84,-2.00,-.47));
     vec4 f0_2=sin(p.y*vec4(-1.47,.32,-.70,-1.51)+p.z*vec4(.17,.75,3.59,4.05)+p.x*vec4(-3.10,1.40,4.72,2.90)+vec4(-6.76,-6.43,2.41,-.66));
@@ -106,15 +108,14 @@ float sdfCow(vec3 p)
     p = rotate(p, vec3(1., 0., 0.), PI / 2.);
     p = rotate(p, vec3(0., 0., 1.), PI / 3. + PI/3.0);
 
-    //sdf is undefined outside the unit sphere, uncomment to witness the abominations
+    // sdf is undefined outside the unit sphere, uncomment to witness the abominations
     if(length(p) > 1.)
     {
         return length(p) - 0.9;
     }
 
-    //// Network Weights for Cow
     //// your implementation starts
-    
+
     //// your implementation ends
 }
 
@@ -229,7 +230,7 @@ vec3 phong_shading(vec3 p, vec3 n)
     vec3 color = vec3(1.0);
 
     //// your implementation starts
-
+    
     //// your implementation ends
 
     return (amb + dif + spec + sunDif) * color;
