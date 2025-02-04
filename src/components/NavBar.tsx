@@ -32,6 +32,11 @@ const tutorials: { title: string; href: string; description: string }[] = [
     href: '/tutorial/colab-tutorial',
     description: 'Google Colab Tutorial',
   },
+  {
+    title: 'Neural SDF Tutorial',
+    href: '/tutorial/neural-sdf-basis',
+    description: 'Google Colab Tutorial',
+  },
 ];
 
 const assignments: { title: string; href: string; description: string }[] = [
@@ -54,9 +59,9 @@ const shaderToys: { title: string; href: string; description: string }[] = [
     description: 'A set of raymarched primitives by Inigo Quilez',
   },
   {
-    title: 'More...',
-    href: '#',
-    description: 'Comming soon',
+    title: 'Neural Stanford Bunny',
+    href: 'https://www.shadertoy.com/view/wtVyWK',
+    description: 'Neural rendering of a Stanford bunny by Blackle Mori',
   },
 ];
 
