@@ -130,50 +130,57 @@ In this step, you are asked to create a PyTorch dataset class named <code>Neural
 </div>
 
 
-<h3 class="h4-custom">Step 1.3 Network Structure</h3>
+<h3 class="h4-custom">Step 1.3: Network Structure</h3>
 <p class="mb-4">    
-    After finishing the creation of your training dataset, you will be tasked to create a neural network class named <code>NeuralSDF</code>. This step consists of two substeps: (1) implementing the constructor and the forward function for the sine-based neural-network layer defined in <code>SineLayer</code>, and (2) implementing the constructor for the neural network architecutre defined in <code>NeuralSDF</code>.
+    After completing the creation of your training dataset, you will implement a neural network class named <code>NeuralSDF</code>. This step consists of two substeps:  
+    (1) implementing the constructor and forward function for the sine-based neural network layer defined in <code>SineLayer</code>, and  
+    (2) implementing the constructor for the overall network architecture defined in <code>NeuralSDF</code>.
+    </br></br>
 
-    (1) You are tasked to fill in the constructor of the <code>SineLayer</code> class. This requires you to first create a Linear layer namd <code>self.fc</code> with input features size <code>in_features</code>
-    and output feature size <code>out_features</code>. </br></br>
-    <!-- (2) You should fill in the <code>forward</code> function. If <code>is_last</code> is True, then you should not apply any activation functions (i.e. sin activation) or skip connections to this layer.
-    If <code>is_first</code> is True, then you should apply the sin activation function but not the skip connection. Otherwise, you should apply both sin activation and skip connection. </br>
-    For sin activation, it should be in form <code>sin(omega * f(x))</code> where <code>omega</code> being sin activation frequency and <code>f(x)</code> being the output of linear layer. </br>
-    For skip connection, it should be in form <code>current_layer(x) / skip_weight + x</code> where <code>x</code> being the input to current layer, <code>current_layer</code> being <code>sin(omega * f(x))</code>
-    and <code>skip_weight</code> is given in the class constructor. </br>
-    </br> -->
+    (1) Implementing the <code>SineLayer</code> Class</br>
+    First, you will complete the constructor of the <code>SineLayer</code> class. This requires creating a Linear layer named <code>self.fc</code> with an input feature size of <code>in_features</code> and an output feature size of <code>out_features</code>.  
+    </br></br>
 
-    Next, you are asked to fill in the <code>forward</code> function of <code>SineLayer</code>. You should consider three cases in your implementation:
-    <ul>
-        <li>For the first layer in the network (i.e., <code>is_first</code> is True), you should apply the sine activation function but not the skip connection. Otherwise, you should apply both sin activation and skip connection. </li>
-        <li>If <code>is_last</code> is True, then you should not apply any activation functions (i.e. sin activation) or skip connections to this layer.</li>
-        <li>Otherwise, you should apply both the sin actiation and the skip connection</li>
-    </ul>
-    For sin activation, it should be in form sin(&omega; &sdot; f(x))  where &omega; being sin activation frequency and <code>f(x)</code> being the output of linear layer. </br>
-    For skip connection, it should be in form current_layer(x) / skip_weight + x where x being the input to current layer, current_layer being sin(&omega; &sdot; f(x))
-    and skip_weight is given in the class constructor. </br></br>
+    Next, you will implement the <code>forward</code> function of <code>SineLayer</code>. Your implementation should handle the following three cases:  
+    </br></br>
 
-    (2) After finishing the <code>SineLayer</code> class, you will move on to implement the network structure in the <code>NeuralSDF</code> class. You should use the <code>SineLayer</code> class you have implemented from the previous substep to create your network structure.     Your task is to append every layer to the list defined by <code>self.network</code>, by following the following guidance:
+    <div class="image-container">
+        <img src="/assignments/A1b_img/equation.png" alt="cases" width="auto" height="auto">
+    </div>
+    </br>
+
+    In these equations: <strong>s</strong> represents the <code>skip_weight</code> parameter, <strong>g(x)</strong> represents the fully connected layer and <strong>w0</strong> represents the activation function frequency.
+
+    You will use the <code>is_first</code> and <code>is_last</code> flags to determine whether it is the first or last layer.  
+    </br></br>
+    
+    (2) Implementing the <code>NeuralSDF</code> Class</br>
+    After implementing the <code>SineLayer</code> class, you will proceed to define the network structure in the <code>NeuralSDF</code> class. This step requires using your previously implemented <code>SineLayer</code> class to construct the network architecture.  
+
+    Your task is to append each layer to the list defined by <code>self.network</code>, following these guidelines:
      
     <ul>
-        <li> Use <code>is_first=True</code> for the first layer and <code>is_first=False</code> otherwise. Use <code>is_last=True</code> for the last layer and <code>is_last=False</code> otherwise. </li>
-        <li> You should create one first layer which has input feature size <code>in_features</code> and output feature size <code>hidden_features</code>. </li>
-        <li> You should then create <code>hidden_layers</code> number of hidden layers with both input and output feature size of <code>hidden_features</code>. </li>
-        <li> Finally, you should create the last layer with input features size <code>hidden_features</code> and output features size being 1. You should use the skip weights being set to <code>skip_weight=sqrt(i+1)</code> where <code>i</code> is the current index of hidden layer. </li>
+        <li><strong>First Layer:</strong> Use the <code>is_first</code> flag to mark it as the first layer. Create a network layer using the <code>SineLayer</code> class with an input feature size of <code>in_features</code> and an output feature size of <code>hidden_features</code>.</li>
+        <li><strong>Hidden Layers:</strong> Create <code>hidden_layers</code> number of hidden layers, each with both input and output feature sizes set to <code>hidden_features</code>. The skip weight should be set to <code>skip_weight=sqrt(i+1)</code>, where <code>i</code> is the index of the current hidden layer.</li>
+        <li><strong>Last Layer:</strong> Create the final layer with an input feature size of <code>hidden_features</code> and an output feature size of 1. Use the <code>is_last</code> flag to mark it as the last layer.</li>
     </ul>
 </p>
 
-<h3 class="h4-custom">Step 1.4 Train Your Network</h3>
-<p class="mb-4">
-    After creating the network structure, you are tasked to train your neural network. You will use Mean Squared Loss (MSE) as your loss function. Remember to zero the grad in your optimizer at the start of each iteration and propagates the loss backward at the end of each iteration. Read the PyTorch tutorials from both the PyTorch official website and our CGAI website.</br>
-    <br>
-    Now, start to train your network! You should observe the loss drop from the print. The entire process is expected to converge around 10,000 epoches (~20 print iterations), which usually takes several minutes on Colab. Note that we intentionally reduce the network size for a fast training process. Feel free to enlarge the network scale for better training results by tuning the provided hyperparameters before the train_neuralSDF function call. 
-</p>
 
+<h3 class="h4-custom">Step 1.4: Train Your Network</h3>
+<p class="mb-4">
+    After creating the network structure, your next task is to train your neural network. You will use Mean Squared Error (MSE) as the loss function.  
+    At the start of each iteration, ensure that you zero the gradients in your optimizer. At the end of each iteration, propagate the loss backward to update the network parameters. Read the PyTorch tutorials from both the <a href="https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html" class="link-inline">PyTorch official website</a> and <a href="https://cgai-gatech.vercel.app/tutorial/pytorch-tutorial" class="link-inline">our CGAI website</a>.</br>
+    </br>
+    Now, start training your network! You should observe a gradual decrease in loss in the printed output. The entire training process is expected to converge after approximately 10,000 epochs (~20 print iterations), which usually takes a few minutes on Colab.  
+    </br></br>
+    Note:We have intentionally reduced the network size for faster training. Feel free to increase the network scale for better results by adjusting the provided hyperparameters before calling the <code>train_neuralSDF</code> function.
+</p>
 
 <h3 class="h3-custom">Step 2: Copy Network Weights to Shader</h3>
 <p class="mb-4">
-    Run the last cell in your notebook. Be sure to run this after the training loop finishs. Copy the text printed out in your notebook and paste them to <code>sdfBunny</code> for bunny and <code>sdfCow</code> for cow. You should now see your trained result on your screen. (Remember to refresh the browser page if you changed your code).
+    Run the final cell in your notebook after the training loop completes. Copy the printed output from your notebook and paste it into <code>sdfBunny</code> for the bunny or <code>sdfCow</code> for the cow.  
+    You should now see your trained results displayed on the screen. If you modify the code, remember to refresh the browser to apply the changes.
 </p>
 
 <h3 class="h3-custom">Step 3: Scene SDF</h3>
