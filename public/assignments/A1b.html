@@ -88,17 +88,18 @@
 </ul>
 
 <h2 class="h2-custom">Starter Code</h2>
-<p>
+<p class="mb-4">
     Please visit the following GitHub repository to get our latest starter code: <a href="https://github.com/cg-gatech/cgai" class="link-inline">https://github.com/cg-gatech/cgai</a>. Make sure to run 'git pull' to synchronize the latest version. Make sure you can access the default CGAI web page after starting the npm server. The starter code for this assignment is located in the folder <code class="code-inline">src/app/(assignment)/assignment/A1b</code>. This folder contains several files, including the main page <code class="code-inline">page.tsx</code>, the Jupyter notebook file <code class="code-inline">neural_sdf.ipynb</code>, the GLSL shader <code class="code-inline">fragment.glsl</code>, and several mesh files. Your implementation will focus on <code class="code-inline">neural_sdf.ipynb</code> and <code class="code-inline">fragment.glsl</code>.
 </p>
 
-<p>
+<p class="mb-4">
+
 To view the default initial effect for this assignment, you can either use the navigation bar by clicking Assignments and then Assignment 1b, or directly access the URL: <a href="http://localhost:3000/assignment/A1b" class="link-inline">http://localhost:3000/assignment/A1b</a> (Note that the port number may vary depending on the available ports on your local computer). After successfully completing the setup, you should see a blank window.
 </p>
 
 <h2 class="h2-custom">Requirements</h2>
 <p class="mb-4">
-For this assignment, you are expected to implement two main components to generate a neural SDF and then render it in a GLSL environment with ray marching. We will briefly discuss each component as follows.
+For this assignment, you are required to implement two main components: generating a neural SDF and rendering it in a GLSL environment using ray marching. You may choose to either first create the neural network by following the substeps in Step I and then visualize it in the GLSL shader in Step II, or complete the rendering functions in Step II first, verify them using the default neural Stanford Bunny model provided in the shader, and then return to implement Step I. The two steps are briefly described as follows.
 </p>
 
 <h3 class="h3-custom">Step 1: Neural SDF Creation</h3>
@@ -164,7 +165,6 @@ In this step, you are asked to create a PyTorch dataset class named <code>Neural
     </ul>
 </p>
 
-
 <h3 class="h4-custom">Step 1.4: Train Your Network</h3>
 <p class="mb-4">
     After creating the network structure, your next task is to train your neural network. You will use Mean Squared Error (MSE) as the loss function.  
@@ -175,28 +175,30 @@ In this step, you are asked to create a PyTorch dataset class named <code>Neural
     Note:We have intentionally reduced the network size for faster training. Feel free to increase the network scale for better results by adjusting the provided hyperparameters before calling the <code>train_neuralSDF</code> function.
 </p>
 
-<h3 class="h3-custom">Step 2: Copy Network Weights to Shader</h3>
+<h3 class="h3-custom">Step 2: Neural SDF Rendering</h3>
+
+<h3 class="h4-custom">Step 2.1: Copy Network Weights to Shader</h3>
 <p class="mb-4">
     Run the final cell in your notebook after the training loop completes. Copy the printed output from your notebook and paste it into <code>sdfBunny</code> for the bunny or <code>sdfCow</code> for the cow.  
     You should now see your trained results displayed on the screen. If you modify the code, remember to refresh the browser to apply the changes.
 </p>
 
-<h3 class="h3-custom">Step 3: Scene SDF</h3>
+<h3 class="h4-custom">Step 2.2: Scene SDF</h3>
 <p class="mb-4">
 In this step, you are tasked with constructing the scene's SDF using the two neural SDF objects. You will need to position these two objects appropriately according to the instructions in the starter code comment. The final SDF function should return the minimum distance to any neural implicit surface in the scene.
 </p>
 
-<h3 class="h3-custom">Step 4: Ray Marching</h3>
+<h3 class="h4-custom">Step 2.3: Ray Marching</h3>
 <p class="mb-4">
 In this step, you are asked to implement the ray marching algorithm to render the SDF scene. You are allowed to reuse your previous implementation in A1a for this function.
 </p>
 
-<h3 class="h3-custom">Step 5: Normal Calculation</h3>
+<h3 class="h4-custom">Step 2.4: Normal Calculation</h3>
 <p class="mb-4">
 In this step, you will calculate the surface normal at a given point using the finite difference method. You are allowed to reuse your previous implementation in A1a for this function.
 </p>
 
-<h3 class="h3-custom">Step 6: Lighting and Coloring</h3>
+<h3 class="h4-custom">Step 2.5: Lighting and Coloring</h3>
 <p class="mb-4">
 In this step, you are asked to color the objects to achieve realistic lighting effects. You are also tasked to assign a unique color to each neural SDF object in the scene based on its position or type. <em>We do not ask for a perfect match of our given video. You may pick any color you like for the rendering of these two objects.</em>
 
@@ -209,7 +211,7 @@ Once you have implemented all these steps, you should be able to observe the two
 </video>
 
 <h2 class="h2-custom">Creative Expression</h2>
-In the Creative Expression section of this assignment, you are encouraged to train your customized neural SDF model. You may either use one of the meshes provided in our starter code, or you may download a new mesh and train its neural SDF model in Colab. You may adjust the size of the network (e.g., the number of layers, the number of weights, etc.) to improve the appearance of your neural SDF model. The creative expression theme for this assignment is <strong>A Tangible Neural Network</strong>.
+In the Creative Expression section of this assignment, you are encouraged to train your customized neural SDF model. You may either use one of the meshes provided in our starter code, or you may download a new mesh and train its neural SDF model in Colab. You may adjust the hyperparameters of the network (e.g., the number of layers, the number of weights, etc.) to improve the appearance of your neural SDF model. The creative expression theme for this assignment is <strong>A Tangible Neural Network</strong>.
 
 <h2 class="h2-custom">Submission</h2>
 <ul class="list-disc pl-8 mb-4">
@@ -226,7 +228,7 @@ In the Creative Expression section of this assignment, you are encouraged to tra
         <strong>Technical Contribution (7 points):</strong> The core of the grading is based on the correct implementation of the neural network architectures and their rendering. The distribution of points is as follows:
         <ul class="list-disc pl-8 mb-4">
             <li>Step 1: 4 points </li>
-            <li>Step 2-6: 3 points </li>
+            <li>Step 2: 3 points </li>
         </ul>
     </li>
     <li>
