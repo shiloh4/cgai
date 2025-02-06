@@ -137,11 +137,11 @@ In this step, you are asked to create a PyTorch dataset class named <code>Neural
     (2) implementing the constructor for the overall network architecture defined in <code>NeuralSDF</code>.
     </br></br>
 
-    (1) Implementing the <code>SineLayer</code> Class</br>
+    <em>Your Implementation (1): <code>SineLayer</code></em></br>
     First, you will complete the constructor of the <code>SineLayer</code> class. This requires creating a Linear layer named <code>self.fc</code> with an input feature size of <code>in_features</code> and an output feature size of <code>out_features</code>.  
-    </br></br>
+    </br>
 
-    Next, you will implement the <code>forward</code> function of <code>SineLayer</code>. Your implementation should handle the following three cases:  
+    Next, you will implement your <code>forward</code> function of <code>SineLayer</code>. Your implementation should handle the following three cases according to the network layer index:  
     </br></br>
 
     <div class="image-container">
@@ -149,12 +149,10 @@ In this step, you are asked to create a PyTorch dataset class named <code>Neural
     </div>
     </br>
 
-    In these equations: <strong>s</strong> represents the <code>skip_weight</code> parameter, <strong>g(x)</strong> represents the fully connected layer and <strong>w0</strong> represents the activation function frequency.
-
-    You will use the <code>is_first</code> and <code>is_last</code> flags to determine whether it is the first or last layer.  
+    In these equations: <strong>s</strong> is a number representing the <code>skip_weight</code> parameter, <strong>w0</strong> is a number representing the activation function frequency, and <strong>g(x)</strong> represents the fully connected layer in the neural network. You will use the flags <code>is_first</code> or <code>is_last</code> to determine whether a network layer passed into the function is the first or last layer or not.  
     </br></br>
     
-    (2) Implementing the <code>NeuralSDF</code> Class</br>
+    <em>Your Implementation (2): <code>NeuralSDF</code></em></br>
     After implementing the <code>SineLayer</code> class, you will proceed to define the network structure in the <code>NeuralSDF</code> class. This step requires using your previously implemented <code>SineLayer</code> class to construct the network architecture.  
 
     Your task is to append each layer to the list defined by <code>self.network</code>, following these guidelines:
