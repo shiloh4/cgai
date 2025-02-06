@@ -37,6 +37,11 @@ const tutorials: { title: string; href: string; description: string }[] = [
     href: '/tutorial/neural-sdf-basis',
     description: 'Google Colab Tutorial',
   },
+  {
+    title: 'Pytorch Tutorial',
+    href: '/tutorial/pytorch-tutorial',
+    description: 'Pytorch Tutorial',
+  },
 ];
 
 const assignments: { title: string; href: string; description: string }[] = [
