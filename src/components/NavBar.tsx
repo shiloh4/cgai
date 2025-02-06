@@ -55,6 +55,16 @@ const assignments: { title: string; href: string; description: string }[] = [
     href: '/assignment/A1a_doc',
     description: 'A1a Document: SDF and Ray Marching',
   },
+  {
+    title: 'Assignment 1B Demo',
+    href: '/assignment/A1b',
+    description: 'A1b Demo: Neural Implicit Surface',
+  },
+  {
+    title: 'Assignment 1B Doc',
+    href: '/assignment/A1b_doc',
+    description: 'A1b Document: Neural Implicit Surface',
+  },
 ];
 
 const shaderToys: { title: string; href: string; description: string }[] = [
