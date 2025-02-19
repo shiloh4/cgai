@@ -129,7 +129,7 @@ To view the default initial effect for this assignment, you can either use the n
     You are asked to convert the CT data into a <code>vec4</code>, where the first three components represent RGB color and the fourth component represents density. 
     You first need to retrieve the density value from the first channel of the volumetric texture <code>iVolume</code>. 
     You can use the built-in <code>texture</code> function in GLSL to query <code>iVolume</code> based on the texture coordinate <code>tex_coord</code>.
-    Then, you will use the provided <code>palette</code> function to map the density value to an RGB color. Optionally, you can multiply the resulting <code>vec4</code> by a constant to enhance visualization.
+    Then, you will use the provided <code>palette</code> function to map the density value to an RGB color. Optionally, you can multiply the resulting <code>vec4</code> by a constant (e.g. 2.0) to enhance visualization.
 </p>
 
 <h3 class="h3-custom">Step 3: ray tracing with volumetric data</h3>
@@ -185,7 +185,7 @@ To view the default initial effect for this assignment, you can either use the n
 <p>Once you finish implementation of the steps above, you should see a video shown below:</p>
 
 <video controls autoplay loop muted>
-    <source src="/assignments/a1b-ref.mp4" type="video/mp4">
+    <source src="/assignments/A2a-ref.mp4" type="video/mp4">
     Your browser does not support the video tag.
 </video>
 
