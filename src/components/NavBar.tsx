@@ -65,6 +65,16 @@ const assignments: { title: string; href: string; description: string }[] = [
     href: '/assignment/A1b_doc',
     description: 'A1b Document: Neural Implicit Surface',
   },
+  {
+    title: 'Assignment 2A Demo',
+    href: '/assignment/A2a',
+    description: 'A2a Demo: Volumetric Rendering',
+  },
+  {
+    title: 'Assignment 2A Doc',
+    href: '/assignment/A2a_doc',
+    description: 'A2a Document: Volumetric Rendering',
+  }
 ];
 
 const shaderToys: { title: string; href: string; description: string }[] = [
