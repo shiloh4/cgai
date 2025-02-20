@@ -92,6 +92,7 @@
 <ul class="list-disc pl-8 mb-4">
     <li>Course Slides on NeRF</li>
     <li><a href="https://www.matthewtancik.com/nerf" class="link-inline">NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis</a></li>
+    <li><a href="https://arxiv.org/pdf/2209.02417" class="link-inline">Volume Rendering Digest (for NeRF)</a></li>
     <li><a href="https://pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html" class="link-inline">PyTorch Official Document (First Four Sections)</a></li>
     <li><a href="https://cgai-gatech.vercel.app/tutorial/colab-tutorial" class="link-inline">CGAI Tutorial: Google Colab</a></li>
     <li><a href="https://cgai-gatech.vercel.app/tutorial/pytorch-tutorial" class="link-inline">CGAI Tutorial: Training a Network in PyTorch</a></li>
@@ -113,7 +114,7 @@
 
 <h2 class="h2-custom">Requirements</h2>
 <p class="mb-4">
-    This assignment consists of two main components: implementing a simplified NeRF model and rendering it in a GLSL-based WebGL environment. You may choose to either first train the NeRF by following the substeps in Step I and then visualize it in the GLSL shader in Step II, or complete the rendering functions in Step II first, verify them using the default neural hotdog model provided in the shader, and then return to implement Step I. The two steps are briefly described as follows.
+    This assignment consists of two main components: implementing a simplified NeRF model and rendering it in a GLSL-based WebGL environment. You may choose to either first train the NeRF by following the substeps in Step I and then visualize it in the GLSL shader in Step II, or complete the rendering functions in Step II first, verify them using the given neural hotdog model provided (<code>hotdog.txt</code>), and then return to implement Step I. The two steps are briefly described as follows.
 </p>
 
 <h3 class="h3-custom">Step 1: NeRF Model Implementation</h3>
@@ -183,7 +184,7 @@
 </p>
 
 <p class="mb-4">
-    A default hotdog NeRF is given to you in <code>fragment.glsl</code>, therefore, if you have correctly implemented Step 2 and directly run your fragment.glsl without modifying the function <code>queryNetwork()</code>, you should get the top left result in the video below. Once you have implemented Step 1 together with Step 2, you should be able to obtain the video for the lego model (the right bottom one in the following video). Note that the video below with composited four object is only for demonstration purposes, in reality, you can only render one NeRF object at one time.
+    A default hotdog NeRF is given to you in <code>hotdog.txt</code>, therefore, if you have correctly implemented Step 2 and directly run your fragment.glsl without modifying the function <code>queryNetwork()</code>, you should get the top left result in the video below. Once you have implemented Step 1 together with Step 2, you should be able to obtain the video for the lego model (the right bottom one in the following video). Note that the video below with composited four object is only for demonstration purposes, in reality, you can only render one NeRF object at one time.
 </p>
     
 <video controls autoplay loop muted>
@@ -193,7 +194,7 @@
 
 <h2 class="h2-custom">Creative Expression</h2>
 <p class="mb-4">
-    In the Creative Expression section of this assignment, you are encouraged to train your customized NeRF model. You may either use one of the datasets provided in our starter code, or you may download new datasets and train their NeRF representations in Colab. You may adjust the hyperparameters of the network (e.g., the number of layers, the number of weights, etc.) to improve the appearance of your NeRF model. The creative expression theme for this assignment is <strong>Radiant Reality</strong>.
+    In the Creative Expression section of this assignment, you are encouraged to train your customized NeRF model. You may either use one of the datasets provided in our starter code, or you may download new datasets, e.g., from <a href="https://www.kaggle.com/datasets/nguyenhung1903/nerf-synthetic-dataset" class="link-inline">Nerf Synthetic Dataset</a> and train their NeRF representations in Colab. Note that you should convert their datasets into a compatible form that your pytorch code can use. For example, the dataset should have three keys "images", "poses" and "focal". Refer to the <code>NeRFDataset</code> class in the notebook for more details. Furthermore, you may adjust some hyperparameters (e.g., the number of frequencies of positional encoding, the learning rate, etc.) to improve the appearance of your NeRF model. However, too aggressively modifying the network structure may lead to lower rendering, and you may need to change the final serialization function accordingly. The creative expression theme for this assignment is <strong>Radiant Reality</strong>.
 </p>
 
 <h2 class="h2-custom">Submission</h2>
@@ -202,16 +203,6 @@
     <li>Your default rendered video for the lego model.</li>
     <li>Your customized video with different datasets for creative expression.</li>
     <li>A concise technical explanation of your implementation.</li>
-</ul>
-
-<h2 class="h2-custom">Grading</h2>
-<p class="mb-4">
-    This assignment is worth 8 points:
-</p>
-<ul class="list-disc pl-8 mb-4">
-    <li>NeRF Model Implementation: 5 points</li>
-    <li>GLSL Rendering: 2 points</li>
-    <li>Creative Expression: 1 point</li>
 </ul>
 
 <h2 class="h2-custom">Grading</h2>
