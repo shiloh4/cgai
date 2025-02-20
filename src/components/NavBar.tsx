@@ -78,12 +78,12 @@ const assignments: { title: string; href: string; description: string }[] = [
   {
     title: 'Assignment 2B Demo',
     href: '/assignment/A2b',
-    description: 'A2b Demo: Neural Radiance Fields (NeRF)',
+    description: 'A2b Demo: Neural Radiance Fields',
   },
   {
     title: 'Assignment 2B Doc',
     href: '/assignment/A2b_doc',
-    description: 'A2b Document: Neural Radiance Fields (NeRF)',
+    description: 'A2b Document: Neural Radiance Fields',
   },
 ];
 
