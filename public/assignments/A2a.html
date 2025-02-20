@@ -94,6 +94,7 @@
     <li>Course Slides on Radiometry Foundation and Participated Media</li>
     <li><a href="https://raytracing.github.io/books/RayTracingTheNextWeek.html#volumes" class="link-inline">Ray Tracing: The Next Week</a></li>
     <li><a href="https://courses.cs.duke.edu/spring03/cps296.8/papers/max95opticalModelsForDirectVolumeRendering.pdf" class="link-inline">Optical models for direct volume rendering</a></li>
+    <li><a href="https://arxiv.org/abs/2209.02417" class="link-inline">Volume Rendering Digest (for NeRF)</a></li>
     <li><a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/volume-rendering-summary-equations.html" class="link-inline">Volume Rendering Notes from Scratchapixel</a></li>
     <li><a href="https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-39-volume-rendering-techniques" class="link-inline">GPU Gem Chapter 39 Volume Rendering Techniques </a></li>
     <li><a href="https://www.shadertoy.com/view/XlBSRz" class="link-inline">Shadertoy Example: Smoke Sphere</a></li>
@@ -143,7 +144,7 @@ To view the default initial effect for this assignment, you can either use the n
         <img src="/assignments/A2a_img/r_eq1.png" alt="cases" width="auto" height="auto">
     </div>
     </br>
-    the descritized version is:</br>
+    the discritized version is:</br>
     <div class="image-container">
         <img src="/assignments/A2a_img/r_eq2.png" alt="cases" width="auto" height="auto">
     </div>
@@ -153,7 +154,7 @@ To view the default initial effect for this assignment, you can either use the n
         <img src="/assignments/A2a_img/r_eq4.png" alt="cases" width="auto" height="auto">
     </div>
     </br>
-    Hence, the final version become:</br>
+    Hence, the final version becomes:</br>
     <div class="image-container">
         <img src="/assignments/A2a_img/r_eq5.png" alt="cases" width="auto" height="auto">
     </div>
@@ -165,7 +166,7 @@ To view the default initial effect for this assignment, you can either use the n
     </br>
 
     Here, within the summation, the first term gives the probability that the light pass through the previous media and reaches the current point, hence gives the attenuation that need to be applied to the color.
-    The second term denotes the probability the light  terminates here and hence the camera sees the color of the media.  <br/>
+    The second term denotes the probability the light terminates here and hence the camera sees the color of the media.  <br/>
 
     We provide you the for-loop for calculating this summation. In each iteration, you should <br/>
     <strong>(1)</strong> Read in the color and density value from both the sphere SDF (using <code>readSDFVolume</code>) and the CT texture (using <code>readCTVolume</code>). 
@@ -190,7 +191,8 @@ To view the default initial effect for this assignment, you can either use the n
 </video>
 
 <h2 class="h2-custom">Creative Expression</h2>
-In the Creative Expression section of this assignment, you are encouraged to create your own volumetric rendering scene by leveraging the volumetric ray tracing framework you've implemented. You may choose to render new volumetric data (we've provided a few in the starter code, you may also download new ones from the link we provided), or you may choose to render new SDF functions as a volumetric media. You are encouraged to play with the default <code>palette</code> function to achieve different volumetric appearance. 
+In the Creative Expression section of this assignment, you are encouraged to create your own volumetric rendering scene by leveraging the volumetric ray tracing framework you've implemented. You may choose to render new volumetric data (we've provided a few in the starter code, you may also download new ones from this
+<a href="https://klacansky.com/open-scivis-datasets/" class="link-inline">link</a>), or you may choose to render new SDF functions as a volumetric media. You are encouraged to play with the default <code>palette</code> function to achieve different volumetric appearance. 
 
 We expect your Creative Expression volumetric rendering scene to demonstrate the visual appealing aspect of participating media. The creative expression theme for this assignment is <strong>Nebulous Realms</strong>.
 
