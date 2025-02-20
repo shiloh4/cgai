@@ -32,7 +32,7 @@ vec3 sigmoid(vec3 x)
     return 1.0 / (1.0 + exp(-x));
 }
 
-//// This is a default hotdog NeRF model, replace this with your trained NeRF
+//// Replace this with the given hotdog NeRF model or your trained NeRF
 vec4 queryNetwork(vec3 p){
     return vec4(0.0, 0.0, 0.0, 0.0);
 }
