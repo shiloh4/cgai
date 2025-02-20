@@ -59,7 +59,7 @@ float rand(vec2 co) {
 //// You are asked to implement the front-to-back volumetric ray tracing algorithm for NeRF to accummulate colors along each ray.
 //// You may reuse most of the code from A2a, however, you would use your trained NeRF model to predict the RGB and sigma value.
 //// To call your trained NeRF model, call queryNetwork(vec3 p)
-//// We have given you a default hotdog model in queryNetwork(vec3 p), replace that with your own NeRF.
+//// We have given you a default hotdog model in hotdog.txt, replace that with your own NeRF.
 //// Caution: After calling your NeRF, you should use Sigmoid for RGB and ReLU for sigma, as you do in your pytorch code.
 //// Sigmoid and ReLU have been defined for you, simply call sigmoid() or relu().
 /////////////////////////////////////////////////////
