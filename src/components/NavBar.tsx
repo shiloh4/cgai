@@ -74,7 +74,7 @@ const assignments: { title: string; href: string; description: string }[] = [
     title: 'Assignment 2A Doc',
     href: '/assignment/A2a_doc',
     description: 'A2a Document: Volumetric Rendering',
-  }
+  },
   {
     title: 'Assignment 2B Demo',
     href: '/assignment/A2b',
