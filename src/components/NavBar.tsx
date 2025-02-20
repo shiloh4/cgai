@@ -65,6 +65,16 @@ const assignments: { title: string; href: string; description: string }[] = [
     href: '/assignment/A1b_doc',
     description: 'A1b Document: Neural Implicit Surface',
   },
+  {
+    title: 'Assignment 2B Demo',
+    href: '/assignment/A2b',
+    description: 'A2b Demo: Neural Radiance Fields (NeRF)',
+  },
+  {
+    title: 'Assignment 2B Doc',
+    href: '/assignment/A2b_doc',
+    description: 'A2b Document: Neural Radiance Fields (NeRF)',
+  },
 ];
 
 const shaderToys: { title: string; href: string; description: string }[] = [
