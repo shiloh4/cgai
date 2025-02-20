@@ -82,17 +82,6 @@ vec4 volumeRendering(vec3 ro, vec3 rd, float near, float far, int n_samples, vec
 
         //// your implementation starts
 
-        vec4 raw = queryNetwork(rotate(p));                                         //// Query network (returns r,g,b,density)
-        vec3 rgb = sigmoid(raw.rgb);                                                //// Ensure rgb is in 0-1
-        float sigma = relu(raw.a);                                                  //// Ensure density is non-negative
-
-        //// compute transmittance
-        float alpha = 1.0 - exp(-sigma * stepSize);
-        float weight = alpha * transmittance;
-
-        //// accumulate color
-        color += weight * rgb;
-        transmittance *= (1.0 - alpha);
 
         //// your implementation ends
 
