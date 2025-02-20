@@ -66,6 +66,16 @@ const assignments: { title: string; href: string; description: string }[] = [
     description: 'A1b Document: Neural Implicit Surface',
   },
   {
+  title: 'Assignment 2A Demo',
+  href: '/assignment/A2a',
+  description: 'A2a Demo: Volumetric Rendering',
+  },
+  {
+    title: 'Assignment 2A Doc',
+    href: '/assignment/A2a_doc',
+    description: 'A2a Document: Volumetric Rendering',
+  }
+  {
     title: 'Assignment 2B Demo',
     href: '/assignment/A2b',
     description: 'A2b Demo: Neural Radiance Fields (NeRF)',
