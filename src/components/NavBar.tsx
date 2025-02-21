@@ -141,7 +141,7 @@ export function NavBar() {
                 width={16}
                 height={16}
               />
-              Course page
+              Canvas page
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
@@ -161,19 +161,6 @@ export function NavBar() {
         {/*  */}
         <NavigationMenuItem>
           <Link
-            href="/syllabus"
-            legacyBehavior
-            passHref
-          >
-            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-              <TreesIcon className='w-4 h-4 mr-2' />
-              Syllabus
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        {/*  */}
-        <NavigationMenuItem>
-          <Link
             href="/course-information"
             legacyBehavior
             passHref
@@ -181,6 +168,19 @@ export function NavBar() {
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               <InfoIcon className='w-4 h-4 mr-2' />
               Course information
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+                {/*  */}
+                <NavigationMenuItem>
+          <Link
+            href="/syllabus"
+            legacyBehavior
+            passHref
+          >
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              <TreesIcon className='w-4 h-4 mr-2' />
+              Syllabus
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
