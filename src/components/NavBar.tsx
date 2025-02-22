@@ -123,7 +123,7 @@ export function NavBar() {
           <Link href="https://github.com/cg-gatech/cgai" legacyBehavior passHref>
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               <GithubIcon className="w-4 h-4 mr-2" />
-              Github page
+              Github Page
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
@@ -141,7 +141,7 @@ export function NavBar() {
                 width={16}
                 height={16}
               />
-              Canvas page
+              Canvas Page
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
@@ -167,7 +167,7 @@ export function NavBar() {
           >
             <NavigationMenuLink className={navigationMenuTriggerStyle()}>
               <InfoIcon className='w-4 h-4 mr-2' />
-              Course information
+              Course Overview
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>
