@@ -181,11 +181,11 @@
 
 <h3 class="h3-custom">Step 2: Rendering with GLSL</h3>
 <p class="mb-4">
-    After training your NeRF model, serialize your model by running the final cell of the notebook, as you did in A1b, and transfer the learned weights to the function <code>queryNetwork()</code> in the shader file <code>fragment.glsl</code> and implement the volume rendering algorithm in WebGL. You may reuse most of your A1a implementation for visualizing SDF neural networks. However, you should now use NeRF to predict the rgb value and the density value for a specific point. You need to implement the Sigmoid and ReLU functions as what you did in your pytorch code.
+    After training your NeRF model, serialize your model by running the final cell of the notebook, as you did in A1b, and copy the learned weights to the function <code>queryNetwork()</code> in the shader file <code>fragment.glsl</code> and implement the volume rendering algorithm in WebGL. You may reuse most of your A1a implementation code. However, you should now use NeRF to predict the rgb value and the density value for a specific point. You need to use the Sigmoid and ReLU functions as what you did in your pytorch code.
 </p>
 
 <p class="mb-4">
-    A default hotdog NeRF is given to you in <code>hotdog.txt</code>, therefore, if you have correctly implemented Step 2 and directly run your fragment.glsl without modifying the function <code>queryNetwork()</code>, you should get the top left result in the video below. Once you have implemented Step 1 together with Step 2, you should be able to obtain the video for the lego model (the right bottom one in the following video). Note that the video below with composited four object is only for demonstration purposes, in reality, you can only render one NeRF object at one time.
+    A default hotdog NeRF is given to you in <code>hotdog.txt</code>, therefore, if you have correctly implemented Step 2 and directly run your fragment.glsl with the function <code>queryNetwork()</code> copied from <code>hotdog.txt</code>, you should get the top left result in the video below. Once you have implemented Step 1 together with Step 2, you should be able to obtain the video for the lego model (the right bottom one in the following video). Note that the video below with composited four object is only for demonstration purposes, in reality, you can only render one NeRF object at one time.
 </p>
     
 <video controls autoplay loop muted>
