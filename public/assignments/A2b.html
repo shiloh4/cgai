@@ -140,7 +140,7 @@
 
 <ul class="list-disc pl-8 mb-4">
     <li>Apply a Sigmoid activation to color to constrain it within [0,1], and use ReLU on density to ensure non-negative values.</li>
-    <li>Compute distances between adjacent depth samples using <code>z_vals</code>. Note that you can append a large value such as 1e10 to <code>z_vals</code> to ensure that the opacity is almost 1 for the last sample point. Additionally, you need to add 1 to the beginning of the transmittance T_i as T_1 (as seen in the given A1A code), also, from the formula below, you can see that T_1 is not well defined as the superscript of the sum <code>i-1</code> becomes 0 if <code>i=1</code>. Finally, apply the volume rendering equation (refer to Page 36 of the lecture slides):</li>
+    <li>Compute distances between adjacent depth samples using <code>z_vals</code>. Note that you can append a large value such as 1e10 to <code>z_vals</code> to ensure that the opacity is almost 1 for the last sample point. Additionally, you need to add 1 to the beginning of the transmittance T_i as T_1 (as seen in the given A1A code) and discard the last element when you do the multiplications. From the formula below, you can see that T_1 is not well defined as the superscript of the sum <code>i-1</code> becomes 0 if <code>i=1</code>. Finally, apply the volume rendering equation (refer to Page 36 of the lecture slides):</li>
     <div class="image-container">
         <img src="/assignments/A2b_img/formula_rendering_fixed.png" alt="Volume rendering equation">
     </div>
