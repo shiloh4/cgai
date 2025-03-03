@@ -10,6 +10,12 @@ varying vec2 vUv;                   //// screen uv coordinates (varying, from ve
 uniform vec2 iResolution;           //// screen resolution (uniform, from CPU)
 uniform float iTime;                //// time elapsed (uniform, from CPU)
 uniform highp sampler3D iVolume;    //// volume texture
+#define PI 3.1415925359
+
+vec3 rotate(vec3 p, vec3 ax, float ro)
+{
+    return mix(dot(p, ax) * ax, p, cos(ro)) + sin(ro) * cross(ax, p);
+}
 
 /////////////////////////////////////////////////////
 //// camera initialization
@@ -36,9 +42,12 @@ vec3 palette(in float t)
   vec3 a = vec3(0.5, 0.5, 0.5);
   vec3 b = vec3(0.5, 0.5, 0.5);
   vec3 c = vec3(1.0, 1.0, 1.0);
-  vec3 d = vec3(0.0, 0.10, 0.20);
+  vec3 d = vec3(0.0, 0.25, 0.25);
 
-  return a + b * cos(6.28318 * (c * t + d));
+  vec3 color = a + b * cos(6.28318 * (c * t + d));
+//   color = (color - 0.5) * 2.2 + 0.5; // add contrast
+  return color;
+
 }
 
 /////////////////////////////////////////////////////
@@ -58,6 +67,41 @@ float sdBox(vec3 p, vec3 b)
     return min(max(d.x,max(d.y,d.z)),0.0) + length(max(d,0.0));
 }
 
+// https://iquilezles.org/articles/mandelbulb/
+float mandelbulb(vec3 p)
+{
+    float power = 8.0 + sin(iTime) * 2.0;       // fractal power -- the higher, the more complex the fractal
+    int iterations = 20;
+    float bailout = 2.0;     // bailout radius -- the distance at which we consider the point to have escaped to infinity
+    float dr = 1.0;        // differential radius for normal estimation
+    float r = length(p);   // curr radius
+    
+    vec3 z = p;
+    for (int i = 0; i < iterations; i++) {
+        r = length(z);
+        if (r > bailout) // r > bailout ? assume orbit escapes to infinity
+            break;
+        
+        // Convert to spherical coordinates
+        float theta = acos(z.z / r); // polar angle from +ve z-axis
+        float phi = atan(z.y, z.x); // azimuth angle in xy plane, from +ve x-axis
+        
+        // Scale and rotate the point
+        dr = pow(r, power - 1.0) * power * dr + 1.0;
+        float zr = pow(r, power);
+        theta *= power;
+        phi *= power;
+        
+        // Convert back to Cartesian coordinates
+        z = zr * vec3(sin(theta) * cos(phi),
+                      sin(theta) * sin(phi),
+                      cos(theta));
+        z += p;
+    }
+    
+    return 0.5 * log(r) * r / dr; // distance estimator -- estimate distance of p from the fractal
+}
+
 /////////////////////////////////////////////////////
 //// color and density calculation from volume data
 /////////////////////////////////////////////////////
@@ -72,14 +116,20 @@ float sdBox(vec3 p, vec3 b)
 vec4 readSDFVolume(vec3 p)
 {
     //// sdf object
-    float distance = sdSphere(p, 1.0); 
+    // float distance = sdBox(p, vec3(1.0));
+    // float distance = sdSphere(p, 1.0);
+    vec3 animatedP = rotate(p, vec3(0.0, 1.0, 0.0), iTime);
+    float distance = mandelbulb(animatedP);
 
     //// convert sdf value to a color
 
     //// your implementation starts
-
-    return vec4(0.0, 0.0, 0.0, 0.0);
-
+    vec3 color = palette(-distance);
+    if (distance < 0.0) {
+        return vec4(color, 1.0);
+    } else {
+        return vec4(color, 0.0);
+    }
     //// your implementation ends
 }
 
@@ -103,8 +153,9 @@ vec4 readCTVolume(vec3 p)
     }
 
     //// your implementation starts
-
-    return vec4(0.0, 0.0, 0.0, 0.0);
+    float density = texture(iVolume, tex_coord).x;
+    vec3 color = palette(density);
+    return vec4(color, density) * 1.2;
 
     //// your implementation ends
 }
@@ -133,7 +184,18 @@ vec4 volumeRendering(vec3 ro, vec3 rd, float near, float far, int n_samples)
         vec3 p = ro + t * rd;                                                   //// sample position on the ray
 
         //// your implementation starts
+        vec4 CTsample = readCTVolume(p - vec3(2.0, 0.0, 0.0));
+        vec4 SDFsample = readSDFVolume(p + vec3(2.0, 0.0, 0.0));
 
+        float density = CTsample.w + SDFsample.w;
+
+        if (density > 0.0) {
+            vec3 blendedColor = (CTsample.rgb * CTsample.w + SDFsample.rgb * SDFsample.w) / density;
+            float sigma = 10.0;
+            float alpha = 1.0 - exp(-sigma * density * stepSize);
+            color += blendedColor * alpha * transmittance;
+            transmittance *= exp(-sigma * density * stepSize);
+        }
 
         //// your implementation ends
 
@@ -152,11 +214,11 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     vec2 uv = (fragCoord - 0.5 * iResolution.xy) / iResolution.y;
 
     //// camera 
-    float angle = 0.5 * iTime;                                                  //// camera angle
+    float angle = 0.2 * iTime;                                                  //// camera angle
     vec3 ta = vec3(0.0, 0.0, 0.0);                                              //// object center
     float radius = 5.5;                                                         //// camera rotation
     float height = 2.2;                                                         //// camera height
-    vec3 ro = ta + vec3(radius * cos(angle), height, radius * sin(angle));      //// camera position
+    vec3 ro = ta + vec3(radius * cos(angle), 0.0, radius * sin(angle));      //// camera position
     mat3 ca = setCamera(ro, ta, 0.0);                                           //// camera matrix
     
     //// ray

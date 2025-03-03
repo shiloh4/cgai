@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+public/bonsai_256x256x256_uint8.raw
+public/christmas_tree_512x499x512_uint16.raw
+public/neghip_64x64x64_uint8.raw
+public/tooth_103x94x161_uint8.raw
