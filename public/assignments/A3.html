@@ -59,7 +59,7 @@
         gap: 20px; /* Space between images */
     }
     .image-container img {
-        width: 20%; /* Adjust width */
+        width: 50%; /* Adjust width */
         height: auto; /* Maintain aspect ratio */
     }
 
@@ -80,145 +80,108 @@
 </h1>
 
 <p class="mb-4">
-    Welcome to our exploration of Gaussian Splatting! In this assignment, you explore the first and crucial backbone under the NeRF framework -- volumetric ray tracing! 
-    The main task for this assignment is to first create two volumetric data, a volumetric sphere colored by its SDF and a CT scan loaded using 3D texture. 
-    Then, you will render the data using the volumetric rendering method we taught in class. All implementions will be in our WebGL shader. Let's get started!
+    Welcome to our exploration of Gaussian Splatting! In this assignment, we'll be optimizing for 2D Gaussians to represent images, while building up the intuition that generalizes to 3D Gaussian Splatting.
+    In Part 1, we'll be targeting a "synthetic" image (originally reconstructed from Gaussians). In Part 2, we'll be optimizing for an actual target image. The main part of this project will be in Python using a Colab Jupyter Notebook. 
+    Then, you will export your optimized parameters into a GLSL shader for visualization. Let's get started!
 </p>
+
 
 <h2 class="h2-custom">Reading</h2>
 <p class="mb-4">
-    Before diving into our code, you may refer to our course slides as well as the supplementary reading materials to get a comprehensive understanding of volumetric rendering. Here is the reading list:
+    Before diving into our code, you may refer to our course slides as well as the shadertoy links below for inspiration. Here is the reading list:
 </p>
 
 <ul class="list-disc pl-8 mb-4">
-    <li>Course Slides on Radiometry Foundation and Participated Media</li>
-    <li><a href="https://raytracing.github.io/books/RayTracingTheNextWeek.html#volumes" class="link-inline">Ray Tracing: The Next Week</a></li>
-    <li><a href="https://courses.cs.duke.edu/spring03/cps296.8/papers/max95opticalModelsForDirectVolumeRendering.pdf" class="link-inline">Optical models for direct volume rendering</a></li>
-    <li><a href="https://arxiv.org/abs/2209.02417" class="link-inline">Volume Rendering Digest (for NeRF)</a></li>
-    <li><a href="https://www.scratchapixel.com/lessons/3d-basic-rendering/volume-rendering-for-developers/volume-rendering-summary-equations.html" class="link-inline">Volume Rendering Notes from Scratchapixel</a></li>
-    <li><a href="https://developer.nvidia.com/gpugems/gpugems/part-vi-beyond-triangles/chapter-39-volume-rendering-techniques" class="link-inline">GPU Gem Chapter 39 Volume Rendering Techniques </a></li>
-    <li><a href="https://www.shadertoy.com/view/XlBSRz" class="link-inline">Shadertoy Example: Smoke Sphere</a></li>
-    <li><a href="https://www.shadertoy.com/view/ds3cWj" class="link-inline">Shadertoy Example: Cloud</a></li>
+    <li>Course Slides on Gaussian Splatting</li>
+    <li><a href="https://www.shadertoy.com/view/tflXRB" class="link-inline">Shadertoy Example: SplAinter</a></li>
+    <li><a href="https://www.shadertoy.com/view/4df3D8" class="link-inline">Shadertoy Example: Gaussian Splatting Example 1</a></li>
+    <li><a href="https://www.shadertoy.com/view/MdfGDH" class="link-inline">Shadertoy Example: Gaussian Splatting Example 2</a></li>
+    <li><a href="https://www.shadertoy.com/view/dtSfDD" class="link-inline">Shadertoy Example: Gaussian Splatting Example 3</a></li>
+    <li><a href="https://www.shadertoy.com/view/4XXSDN" class="link-inline">Shadertoy Example: Interpolated Daft Punk Splats</a></li>
 </ul>
 
 <h2 class="h2-custom">Starter Code</h2>
 <p class="mb-4">
     Please visit the following GitHub repository to get our latest starter code: <a href="https://github.com/cg-gatech/cgai" class="link-inline">https://github.com/cg-gatech/cgai</a>. Make sure to run 'git pull' to synchronize the latest version. Make sure you can access the default CGAI web page after starting the npm server. 
-    The starter code for this assignment is located in the folder <code class="code-inline">src/app/(assignment)/assignment/A3</code>. This folder contains two files, including the main page <code class="code-inline">page.tsx</code> and the GLSL shader <code class="code-inline">fragment.glsl</code>. 
-    Your implementation will focus on <code class="code-inline">fragment.glsl</code>.
+    The starter code for this assignment is located in the folder <code class="code-inline">src/app/(assignment)/assignment/A3</code>. This folder contains several files, including the main page <code class="code-inline">page.tsx</code>, the Jupyter notebook file <code class="code-inline">2DGS_A3.ipynb</code>, and the GLSL shader 
+    <code class="code-inline">fragment.glsl</code>. Your implementation will focus on <code class="code-inline">2DGS_A3.ipynb</code> and <code class="code-inline">fragment.glsl</code>.
 </p>
 
 <p class="mb-4">
 
-To view the default initial effect for this assignment, you can either use the navigation bar by clicking Assignments and then Assignment 3, or directly access the URL: <a href="http://localhost:3000/assignment/A3" class="link-inline">http://localhost:3000/assignment/A3</a> (Note that the port number may vary depending on the available ports on your local computer). After successfully completing the setup, you should see a blank window.
+To view the default initial effect for this assignment, you can either use the navigation bar by clicking Assignments and then Assignment 3, or directly access the URL: <a href="http://localhost:3000/assignment/A3" class="link-inline">http://localhost:3000/assignment/A3</a> 
+(Note that the port number may vary depending on the available ports on your local computer). After successfully completing the setup, you should see a blank window.
 </p>
 
 <h2 class="h2-custom">Requirements</h2>
 <p class="mb-4">
-    For this assignment, you are expected to implement three components to render volumetric data with an ray marching framework: <em>calculate color and density from sdf</em>, <em>calculate color and density from CT data,</em> and <em>ray tracing with volumetric data</em>. We will briefly discuss each step as follows.
+    For this assignment, you are expected to optimize two components to reconstruct both a "synthetic" and a real target image: <em>create 2D gaussians</em>, <em>optimize gaussians on a "synthetic" image</em>, <em>optimize gaussians on an image of your choice</em>, and <em>render optimized gaussians</em>. 
+    We will briefly discuss each step as follows, but more information and equation explanations can be found in the Jupyter notebook file <code class="code-inline">2DGS_A3.ipynb</code>, along with your starter code.
 </p>
 
-<h3 class="h3-custom">Step 1: calculate color and density from sdf</h3>
+<h3 class="h3-custom">Step 0: Create 2D gaussians</h3>
 <p class="mb-4">
-    You are tasked to convert the SDF value into a <code>vec4</code>, where the first three components store RGB color and the fourth represents density. 
-    We provided you the SDF value in the <code>distance</code> variable. You should use the given <code>palette</code> function to map the value to an RGB color. 
-    Notice, we use the <code>-distance</code> value for calculating <code>palette</code> to ensure uniform color tone with Step 2.
-    Finally, you will set the density to 1.0 for points inside the object (SDF < 0) and 0.0 for points outside (SDF ≥ 0).
+    You are tasked to write some of the necessary building blocks for creating the 2D gaussian representation required for gaussian splatting. These components include the rotation matrix R and 
+    the diagonal inverse scaling matrix D for each gaussian, as well as the final color field for the image (essentially the sum of the contributions of each Gaussian).
 </p>
-<h3 class="h3-custom">Step 2: calculate color and density from CT data</h3>
+<h3 class="h3-custom">Step 1: Optimize for Synthetic Ground Truth</h3>
 <p class="mb-4">
-    You are asked to convert the CT data into a <code>vec4</code>, where the first three components represent RGB color and the fourth component represents density. 
-    You first need to retrieve the density value from the first channel of the volumetric texture <code>iVolume</code>. 
-    You can use the built-in <code>texture</code> function in GLSL to query <code>iVolume</code> based on the texture coordinate <code>tex_coord</code>.
-    Then, you will use the provided <code>palette</code> function to map the density value to an RGB color. Optionally, you can multiply the resulting <code>vec4</code> by a constant (e.g. 2.0) to enhance visualization.
+    You are tasked to create your own unique and creative synthetic target image based on the simplistic synthetic image we have provided. Feel free to hange the number of Gaussians, 
+    just make sure to have the same number of colors, positions, scales, and rotations defined in each tensor (i.e. match their first dimension). REMEMBER to answer the reflection question 
+    at the end of section 1.2 about the initial gaussian image pre-optimization. Finally, use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
+    the gaussian splatting optimization process.
 </p>
-
-<h3 class="h3-custom">Step 3: ray tracing with volumetric data</h3>
+<h3 class="h3-custom">Step 2: Optimize for Target Image</h3>
 <p class="mb-4">
-    You are asked to implement the front-to-back volumetric ray tracing algorithm to accummulate colors along each ray. You will accumulate color and transmittance along the ray based on the absorption-emission volumetric model. We briefly describe the mathematical model as below:
-    <!-- Recall from course slides, transmittance depicts its probability of passing through a volumetric data.  -->
-    <!-- Considering only absorption in the volumetric rendering equation, for uniform density (i.e. uniform extinction coefficient), the transmittance (probability) of a ligh can be descibed using: -->
-
-    Recall the volumetric rendering equation for only considering absorption can be written as:</br>
-    <div class="image-container2">
-        <img src="/assignments/A2a_img/r_eq1.png" alt="cases" width="auto" height="auto">
-    </div>
-    </br>
-    the discritized version is:</br>
-    <div class="image-container">
-        <img src="/assignments/A2a_img/r_eq2.png" alt="cases" width="auto" height="auto">
-    </div>
-    </br>
-    Assuming a small truncation of volumetric data with uniform density, the inner integral can be written as:</br>
-    <div class="image-container2">
-        <img src="/assignments/A2a_img/r_eq4.png" alt="cases" width="auto" height="auto">
-    </div>
-    </br>
-    Hence, the final version becomes:</br>
-    <div class="image-container">
-        <img src="/assignments/A2a_img/r_eq5.png" alt="cases" width="auto" height="auto">
-    </div>
-    </br>
-    with the accumulated transmittance defined as:</br>
-    <div class="image-container2">
-        <img src="/assignments/A2a_img/r_eq6.png" alt="cases" width="auto" height="auto">
-    </div>
-    </br>
-
-    Here, within the summation, the first term gives the probability that the light pass through the previous media and reaches the current point, hence gives the attenuation that need to be applied to the color.
-    The second term denotes the probability the light terminates here and hence the camera sees the color of the media.  <br/>
-
-    We provide you the for-loop for calculating this summation. In each iteration, you should <br/>
-    <strong>(1)</strong> Read in the color and density value from both the sphere SDF (using <code>readSDFVolume</code>) and the CT texture (using <code>readCTVolume</code>). 
-    You will place the CT volume by subtracting the query point with an offset of its center and place the sphere SDF volume centering using the same method. The center of the CT volume is located at [2, 0, 0] and the center of the SDF volume is located at [-2, 0, 0].<br/>
-    <strong>(2)</strong> Following the equations given above, you will first use the accumualted transmittance and the extinction coefficient to accumulate color at the current point:</br>
-    <div class="image-container2">
-        <img src="/assignments/A2a_img/r_eq7.png" alt="cases" width="auto" height="auto">
-    </div>
-    </br>
-    <strong>(3)</strong> You will accumulate the transmittance in preparetion for the next iteration.</br>
-    <div class="image-container">
-        <img src="/assignments/A2a_img/r_eq8.png" alt="cases" width="auto" height="auto">
-    </div>
-    </br>
+    Here, you are asked to once again use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
+    the gaussian splatting optimization process. Additionally, as part of our creative expression section, after you test with our sample image (The Mona Lisa), 
+    add your own target image and optimize a new set of gaussians for your chosen target image.
 </p>
 
-<p>Once you finish implementation of the steps above, you should see a video shown below:</p>
+<h3 class="h3-custom">Step 3: Render Optimized Gaussians</h3>
+<p class="mb-4">
+    If you would like to view your gaussian splatting results on our class website instead of in the small Jupyter notebook cell, follow the instructions in the <code class="code-inline">fragment.glsl</code> file 
+    and copy and paste the generated parameters from your Jupyter notebook to the specified section in the GLSL file. This way, you can see your target gaussian splatting image on the class website.
+</p>
+    
+<br>
+Once you finish implementation of Step 1 - 2.3 with the Mona Lisa image, you should see the image shown below:
 
-<video controls autoplay loop muted>
-    <source src="/assignments/A2a-ref.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+<div class="image-container">
+    <img src="/assignments/a3-ref.png" alt="Optimized Mona Lisa Output">
+</div>
 
 <h2 class="h2-custom">Creative Expression</h2>
-In the Creative Expression section of this assignment, you are encouraged to create your own volumetric rendering scene by leveraging the volumetric ray tracing framework you've implemented. You may choose to render new volumetric data (we've provided a few in the starter code, you may also download new ones from this
-<a href="https://klacansky.com/open-scivis-datasets/" class="link-inline">link</a>), or you may choose to render new SDF functions as a volumetric media. You are encouraged to play with the default <code>palette</code> function to achieve different volumetric appearance. 
+In the Creative Expression section of this assignment, you are encouraged to create both your own "synthethic" gaussian splatting scene and your own target image gaussian splatting scene. 
+You may choose to utilize a target image that you find online or one that you create yourself. You are encouraged to play with the default parameters in the optimization model (ex. number of gaussians, learning rate, etc.) 
+to see how these changes can impact your final result. 
 
-We expect your Creative Expression volumetric rendering scene to demonstrate the visual appealing aspect of participating media. The creative expression theme for this assignment is <strong>Nebulous Realms</strong>.
+We expect your Creative Expression gaussian splatting scenes to demonstrate how gaussians can be used to represent complex scenes. The creative expression theme for this assignment is <strong>Artistic Effects</strong>.
 
 <h2 class="h2-custom">Submission</h2>
 <ul class="list-disc pl-8 mb-4">
-    <li>Your source code <code class="code-inline">fragment.glsl</code></li>
-    <li>Your default volumetric ray tracing video after completing the three steps</li>
-    <li>Your customized video with your own volumetric rendering for creative expression</li>
-    <li>A concise technical explanation of your implementation</li>
+    <li>Your source code <code class="code-inline">2DGS_A3.ipynb</code> and <code class="code-inline">fragment.glsl</code></li>
+    <li>Your creative "synthetic" gaussian splat image in the same format as the Mona Lisa image above</li>
+    <li>Your creatuve target gaussian splat image in the same format as the Mona Lisa image above</li>
+    <li>The answer to Reflection Question 1 from the Jupyter Notebook and a concise technical explanation of your implementation</li>
 </ul>
+
 
 <h2 class="h2-custom">Grading</h2>
 <p>This assignment is worth a total of 8 points, with the grading criteria outlined as follows:</p>
 <ul class="list-disc pl-8 mb-4">
     <li>
-        <strong>Technical Contribution (7 points):</strong> The core of the grading is based on the correct implementation of loading volumetric data and volumetric rendering. The distribution of points is as follows:
+        <strong>Technical Contribution (7 points):</strong> The core of the grading is based on the correct implementation of the 2D gaussian creation and the two optimization loops for both the "synthetic" and target scenes. The distribution of points is as follows:
         <ul class="list-disc pl-8 mb-4">
-            <li>Step 1: 2 points </li>
-            <li>Step 2: 2 points </li>
-            <li>Step 3: 3 points </li>
+            <li>Step 0: 1 point </li>
+            <li>Step 1: 3 points </li>
+            <li>Step 2: 3 points </li>
         </ul>
     </li>
     <li>
-        <strong>Creative Expression (1 point):</strong> This aspect focuses on your ability to load new volumetric data and render it out for new expressive scenes.
+        <strong>Creative Expression (1 point):</strong> This aspect focuses on your ability to create and optimize for novel and unique gaussian-based scenes.
     </li>
 </ul>
 
 <h2 class="h2-custom">Sharing Your Work</h2>
-<p>You are encouraged to share your graphical work with the class. If you want to do so, please upload your image to the Ed Discussion post <strong>A2a Gallery: Nebulous Realms</strong>. This is an excellent opportunity to engage with your peers and gain recognition for your work. Share with us the nebulous world you create!</p>
+<p>You are encouraged to share your graphical work with the class. If you want to do so, please upload your image to the Ed Discussion post <strong>A3 Gallery: Artistic Effects</strong>. This is an excellent opportunity to engage with your peers and gain recognition for your work. Share with us the nebulous world you create!</p>
