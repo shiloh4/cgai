@@ -3,17 +3,17 @@ uniform vec2 iResolution;
 
 //======================================================= Copy-Paste Area Begin =========================================================
 // Number of Gaussians
-const int NUM_GAUSSIANS = 0;
+const int NUM_GAUSSIANS = 2;
 // Dimensions [x_min, x_max, y_min, y_max]
-float dim[4] = float[4](0,0,0,0);
+float dim[4] = float[4](-5.0,5.0,-5.0,5.0);
 // Centers (x, y coordinates)
-vec2 gauss_centers[NUM_GAUSSIANS] = [];
+vec2 gauss_centers[NUM_GAUSSIANS] = vec2[NUM_GAUSSIANS](vec2(-3.00, 1.50),vec2(1.50, 2.50));
 // Sigmas (scales)
-vec2 gauss_sigmas[NUM_GAUSSIANS] = [];
+vec2 gauss_sigmas[NUM_GAUSSIANS] = vec2[NUM_GAUSSIANS](vec2(2.00, 1.50),vec2(1.50, 0.50));
 // Rotation angles (thetas)
-float gauss_thetas[NUM_GAUSSIANS] = [];
+float gauss_thetas[NUM_GAUSSIANS] = float[NUM_GAUSSIANS](0.20,0.80);
 // Colors (RGB)
-vec3 gauss_colors[NUM_GAUSSIANS] = [];
+vec3 gauss_colors[NUM_GAUSSIANS] = vec3[NUM_GAUSSIANS](vec3(0.70, 0.10, 0.20),vec3(0.30, 0.80, 0.10));
 
 //======================================================= Copy-Paste Area End =========================================================
 
@@ -76,7 +76,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
         
         // Build inverse covariance matrix
         mat2 sigma_inv = buildSigmaInv(theta, scale);
-        float f_x = 0;
+        float f_x = 0.;
 
         /////////// 
         // BEGINNING OF YOUR CODE.
