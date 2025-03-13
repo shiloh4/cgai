@@ -82,7 +82,7 @@
 <p class="mb-4">
     Welcome to our exploration of Gaussian Splatting! In this assignment, we'll be optimizing for 2D Gaussians to represent images, while building up the intuition that generalizes to 3D Gaussian Splatting.
     In Part 1, we'll be targeting a "synthetic" image (originally reconstructed from Gaussians). In Part 2, we'll be optimizing for an actual target image. The main part of this project will be in Python using a Colab Jupyter Notebook. 
-    Then, you will export your optimized parameters into a GLSL shader for visualization. Let's get started!
+    Then, you will fill in our implementation of a Gaussian GLSL shader and export your optimized parameters into it for visualization. Let's get started!
 </p>
 
 
@@ -103,8 +103,8 @@
 <h2 class="h2-custom">Starter Code</h2>
 <p class="mb-4">
     Please visit the following GitHub repository to get our latest starter code: <a href="https://github.com/cg-gatech/cgai" class="link-inline">https://github.com/cg-gatech/cgai</a>. Make sure to run 'git pull' to synchronize the latest version. Make sure you can access the default CGAI web page after starting the npm server. 
-    The starter code for this assignment is located in the folder <code class="code-inline">src/app/(assignment)/assignment/A3</code>. This folder contains several files, including the main page <code class="code-inline">page.tsx</code>, the Jupyter notebook file <code class="code-inline">2DGS_A3.ipynb</code>, and the GLSL shader 
-    <code class="code-inline">fragment.glsl</code>. Your implementation will focus on <code class="code-inline">2DGS_A3.ipynb</code> and <code class="code-inline">fragment.glsl</code>.
+    The starter code for this assignment is located in the folder <code class="code-inline">src/app/(assignment)/assignment/A3</code>. This folder contains several files, including the main page <code class="code-inline">page.tsx</code>, the Jupyter notebook file <code class="code-inline">2DGS_A3_solution.ipynb</code>, and the GLSL shader 
+    <code class="code-inline">fragment.glsl</code>. Your implementation will focus on <code class="code-inline">2DGS_A3_solution.ipynb</code> and <code class="code-inline">fragment.glsl</code>.
 </p>
 
 <p class="mb-4">
@@ -116,7 +116,7 @@ To view the default initial effect for this assignment, you can either use the n
 <h2 class="h2-custom">Requirements</h2>
 <p class="mb-4">
     For this assignment, you are expected to optimize two components to reconstruct both a "synthetic" and a real target image: <em>create 2D gaussians</em>, <em>optimize gaussians on a "synthetic" image</em>, <em>optimize gaussians on an image of your choice</em>, and <em>render optimized gaussians</em>. 
-    We will briefly discuss each step as follows, but more information and equation explanations can be found in the Jupyter notebook file <code class="code-inline">2DGS_A3.ipynb</code>, along with your starter code.
+    We will briefly discuss each step as follows, but more information and equation explanations can be found in the Jupyter notebook file <code class="code-inline">2DGS_A3_solution.ipynb</code>, along with your starter code.
 </p>
 
 <h3 class="h3-custom">Step 0: Create 2D gaussians</h3>
@@ -124,45 +124,62 @@ To view the default initial effect for this assignment, you can either use the n
     You are tasked to write some of the necessary building blocks for creating the 2D gaussian representation required for gaussian splatting. These components include the rotation matrix R and 
     the diagonal inverse scaling matrix D for each gaussian, as well as the final color field for the image (essentially the sum of the contributions of each Gaussian).
 </p>
+
 <h3 class="h3-custom">Step 1: Optimize for Synthetic Ground Truth</h3>
 <p class="mb-4">
     You are tasked to create your own unique and creative synthetic target image based on the simplistic synthetic image we have provided. Feel free to hange the number of Gaussians, 
-    just make sure to have the same number of colors, positions, scales, and rotations defined in each tensor (i.e. match their first dimension). REMEMBER to answer the reflection question 
-    at the end of section 1.2 about the initial gaussian image pre-optimization. Finally, use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
+    just make sure to have the same number of colors, positions, scales, and rotations defined in each tensor (i.e. match their first dimension). <b>REMEMBER to answer the reflection question 
+    at the end of section 1.2 about the initial gaussian image pre-optimization. </b> Finally, use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
     the gaussian splatting optimization process.
+
+    Once you have implemented this step, you should be able to observe the optimization process for the "synthetic" image as shown in the video below. 
 </p>
+
+<video controls autoplay loop muted>
+    <source src="/assignments/A3_img/anim-synthetic.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
 <h3 class="h3-custom">Step 2: Optimize for Target Image</h3>
 <p class="mb-4">
     Here, you are asked to once again use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
     the gaussian splatting optimization process. Additionally, as part of our creative expression section, after you test with our sample image (The Mona Lisa), 
     add your own target image and optimize a new set of gaussians for your chosen target image.
+
+    Once you have implemented this step, you should be able to observe the optimization process for the provided target image as shown in the video below. 
 </p>
+
+<video controls autoplay loop muted>
+    <source src="/assignments/A3_img/anim-image.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
 
 <h3 class="h3-custom">Step 3: Render Optimized Gaussians</h3>
 <p class="mb-4">
-    If you would like to view your gaussian splatting results on our class website instead of in the small Jupyter notebook cell, follow the instructions in the <code class="code-inline">fragment.glsl</code> file 
-    and copy and paste the generated parameters from your Jupyter notebook to the specified section in the GLSL file. This way, you can see your target gaussian splatting image on the class website.
+    In this step, you must copy your generated Gaussian parameters for the target image and fill in the gaps in the <code class="code-inline">fragment.glsl</code> file to accurately show the list of gaussians. 
+    Your code will include building the inverse covariance matrix needed to place Gaussians in the scene and calculating the contribution of each Gaussian to the overall image field. This way, you can see your target gaussian splatting image on the class website.
 </p>
     
 <br>
 Once you finish implementation of Step 1 - 2.3 with the Mona Lisa image, you should see the image shown below:
 
 <div class="image-container">
-    <img src="/assignments/a3-ref.png" alt="Optimized Mona Lisa Output">
+    <img src="/assignments/A3_img/a3-ref.png" alt="Optimized Mona Lisa Output">
 </div>
 
 <h2 class="h2-custom">Creative Expression</h2>
 In the Creative Expression section of this assignment, you are encouraged to create both your own "synthethic" gaussian splatting scene and your own target image gaussian splatting scene. 
-You may choose to utilize a target image that you find online or one that you create yourself. You are encouraged to play with the default parameters in the optimization model (ex. number of gaussians, learning rate, etc.) 
-to see how these changes can impact your final result. 
+While your "synthetic" scene must be made by initializing your own set of unique gaussians, you may choose to utilize a target image that you find online or one that you create yourself. 
+You are encouraged to play with the default parameters in the optimization model (ex. number of gaussians, learning rate, etc.) to see how these changes can impact your final result. 
 
 We expect your Creative Expression gaussian splatting scenes to demonstrate how gaussians can be used to represent complex scenes. The creative expression theme for this assignment is <strong>Artistic Effects</strong>.
 
 <h2 class="h2-custom">Submission</h2>
 <ul class="list-disc pl-8 mb-4">
-    <li>Your source code <code class="code-inline">2DGS_A3.ipynb</code> and <code class="code-inline">fragment.glsl</code></li>
-    <li>Your creative "synthetic" gaussian splat image in the same format as the Mona Lisa image above</li>
-    <li>Your creatuve target gaussian splat image in the same format as the Mona Lisa image above</li>
+    <li>Your source code <code class="code-inline">2DGS_A3_solution.ipynb</code> and <code class="code-inline">fragment.glsl</code></li>
+    <li>Your creative "synthetic" gaussian splat image/video in the same format as the Mona Lisa image above</li>
+    <li>Your creative target gaussian splat image/video in the same format as the Mona Lisa image above</li>
     <li>The answer to Reflection Question 1 from the Jupyter Notebook and a concise technical explanation of your implementation</li>
 </ul>
 

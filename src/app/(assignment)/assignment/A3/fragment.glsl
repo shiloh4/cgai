@@ -17,30 +17,33 @@ vec3 gauss_colors[NUM_GAUSSIANS] = [];
 
 //======================================================= Copy-Paste Area End =========================================================
 
+/////////////////////////////////////////////////////
+//// Here, you are asked to build the inverse covariance matrix, similar to in the 2DGS_A3_solution.ipynb file.
+//// You must create the rotation matrix R, the inverse squared sigma matrix D, and the final inverse covariance matrix. 
+/////////////////////////////////////////////////////
+
 // This function builds the inverse covariance matrix
 mat2 buildSigmaInv(float theta, vec2 sigma)
 {
-    // Create rotation matrix
-    float cos_theta = cos(theta);
-    float sin_theta = sin(theta);
-    // Column-major order
-    mat2 R = mat2(
-        cos_theta, sin_theta,
-        -sin_theta, cos_theta
-    );
+    mat2 cov_mat = mat2(0, 0, 0, 0);
+
+    /////////// 
+    // BEGINNING OF YOUR CODE.
+    //////////
     
-    // Create inverse squared sigma matrix
-    mat2 inv_squared_sigma = mat2(
-        1.0 / (sigma.x * sigma.x + 1e-7), 0.0,
-        0.0, 1.0 / (sigma.y * sigma.y + 1e-7)
-    );
     
-    // Return R * inv_squared_sigma * R^T
-    return R * inv_squared_sigma * mat2(
-        R[0][0], R[1][0],
-        R[0][1], R[1][1]
-    );
+
+    /////////// 
+    // END OF YOUR CODE.
+    //////////
+    return cov_mat;
 }
+
+/////////////////////////////////////////////////////
+//// Here, you are asked to fill in the necessary components for calculating each gaussian's contribution to the current pixel's color.
+//// You must calculate the position of the pixel relative to the gaussian's center, calculate the contribution exponent (pos^T * sigma_inv * pos) 
+//// and finally calculate the Gaussian function value that will control the contribution of this specific gaussian.
+/////////////////////////////////////////////////////
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
@@ -70,17 +73,19 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
         vec2 scale = gauss_sigmas[i];
         float theta = gauss_thetas[i];
         vec3 color_rgb = gauss_colors[i];
-
-        vec2 pos = uv - center;
         
         // Build inverse covariance matrix
         mat2 sigma_inv = buildSigmaInv(theta, scale);
+        float f_x = 0;
+
+        /////////// 
+        // BEGINNING OF YOUR CODE.
+        //////////
         
-        // Calculate exponent: pos^T * sigma_inv * pos
-        float exponent = dot(pos * sigma_inv, pos);
-        
-        // Calculate Gaussian function value
-        float f_x = exp(-0.5 * exponent);
+
+        /////////// 
+        // END OF YOUR CODE.
+        //////////
         
         // Add color contribution
         color += f_x * color_rgb;
