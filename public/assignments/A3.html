@@ -65,11 +65,11 @@
 
     .image-container2 {
         display: flex; 
-        justify-content: center; /* Center images */
+        justify-content: left; /* Center images */
         gap: 20px; /* Space between images */
     }
     .image-container2 img {
-        width: 30%; /* Adjust width */
+        width: 75%; /* Adjust width */
         height: auto; /* Maintain aspect ratio */
     }
 
@@ -107,6 +107,8 @@
     <code class="code-inline">fragment.glsl</code>. Your implementation will focus on <code class="code-inline">2DGS_A3_solution.ipynb</code> and <code class="code-inline">fragment.glsl</code>.
 </p>
 
+</br>
+
 <p class="mb-4">
 
 To view the default initial effect for this assignment, you can either use the navigation bar by clicking Assignments and then Assignment 3, or directly access the URL: <a href="http://localhost:3000/assignment/A3" class="link-inline">http://localhost:3000/assignment/A3</a> 
@@ -121,16 +123,51 @@ To view the default initial effect for this assignment, you can either use the n
 
 <h3 class="h3-custom">Step 0: Create 2D gaussians</h3>
 <p class="mb-4">
-    You are tasked to write some of the necessary building blocks for creating the 2D gaussian representation required for gaussian splatting. These components include the rotation matrix R and 
-    the diagonal inverse scaling matrix D for each gaussian, as well as the final color field for the image (essentially the sum of the contributions of each Gaussian).
+    You are tasked to write some of the necessary building blocks for creating the 2D gaussian representation required for gaussian splatting. 
+    This includes the inverse covariance matrix of the Gaussian and the accumulation of Gaussians across an image, which will help us evaluate 
+    and visualize how well our Gaussian "splats" can represent our target image.
+</p>
+
+<h3 class="h4-custom">Step 0.1: Build The Inverse Covariance Matrix</h3>
+<div class="image-container2">
+    <img src="/assignments/A3_img/a3_eq1.png" alt="Explanation of calculation for inverse covariance matrix for single 2D Gaussian">
+</div>
+
+</br>
+
+<p class="mb-4">    
+    Here, you will build the inverse covariance matrix for a single 2D Gaussian, using the provided rotation and scale vector. 
+    In order to do this, you must build the rotation matrix R and the diagonal inverse scaling matrix D (seen above as (SS^T)).
+</p>
+
+<h3 class="h4-custom">Step 0.2: Accumulate contribution of Gaussians for image field</h3>
+<div class="image-container2">
+    <img src="/assignments/A3_img/a3_eq2.png" alt="Explanation of accumulation of Gaussian Contribution across image">
+</div>
+
+</br>
+
+<p class="mb-4">    
+    Here, you will reconstruct the image by sampling multiple 2D Gaussians over a given 2D domain.
+    In order to do this for each gaussian, you must apply the inverse covariance matrix to the Gaussian's position to get the transformed position and apply the function f(p) to the transformed position as seen in the equation block above. 
+    Finally, you must multiply the alpha of the gaussian by the gaussian's contribution value f(p) to get the weighted contribution of this Gaussian that can be added to the image field.
 </p>
 
 <h3 class="h3-custom">Step 1: Optimize for Synthetic Ground Truth</h3>
 <p class="mb-4">
-    You are tasked to create your own unique and creative synthetic target image based on the simplistic synthetic image we have provided. Feel free to hange the number of Gaussians, 
+    In Steps 1.1 and 1.2, we show how to create a "synthetic" or program-based set of Gaussians to represent an image. 
+    We then ask you to help build the optimization loop for training our Gaussian representation in Step 1.3. 
+    This implementation builds off of the optimization work you have done in our previous projects.
+
+</br>
+</br>
+    
+    Finally, in Step 1.4, you are tasked to create your own unique and creative synthetic target image based on the simplistic synthetic image we have provided. Feel free to change the number of Gaussians, 
     just make sure to have the same number of colors, positions, scales, and rotations defined in each tensor (i.e. match their first dimension). <b>REMEMBER to answer the reflection question 
-    at the end of section 1.2 about the initial gaussian image pre-optimization. </b> Finally, use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
-    the gaussian splatting optimization process.
+    at the end of section 1.2 about the initial gaussian image pre-optimization! </b> 
+
+</br>
+</br>
 
     Once you have implemented this step, you should be able to observe the optimization process for the "synthetic" image as shown in the video below. 
 </p>
@@ -142,9 +179,21 @@ To view the default initial effect for this assignment, you can either use the n
 
 <h3 class="h3-custom">Step 2: Optimize for Target Image</h3>
 <p class="mb-4">
-    Here, you are asked to once again use your knowledge of optimization and loss functions from prior projects to fill in the gaps within 
-    the gaussian splatting optimization process. Additionally, as part of our creative expression section, after you test with our sample image (The Mona Lisa), 
-    add your own target image and optimize a new set of gaussians for your chosen target image.
+    Here, we complete the same process as in Step 1, but customized for a target image of our choosing. 
+    We begin by loading the target image (Ours is the Mona Lisa) in Step 2.1 and initializing a set of random Gaussians in Step 2.2 to optimize for the target image.
+</br>
+</br>
+    You are asked to once again use your knowledge of optimization and loss functions from prior projects to fill in the gaps within the gaussian splatting optimization process in Step 2.3. 
+    You will initialize the learning rate, optimizer, and loss function in Step 2.3.1 and implement the optimization loop in Step 2.3.2. 
+    Additionally, as part of our creative expression section, after you test with our sample image (The Mona Lisa), 
+    add your own target image in Step 2.1 and optimize a new set of gaussians for your chosen target image. 
+    <b>REMEMBER to save your optimization videos/images to turn in with your code! </b> 
+
+</br>
+</br>
+    The final section of Step 2 (Step 2.4) is to run the exporting code to export your final Gaussian parameters into a GLSL format so we can run your Gaussian optimization in the GLSL shader.
+</br>
+</br>
 
     Once you have implemented this step, you should be able to observe the optimization process for the provided target image as shown in the video below. 
 </p>
@@ -158,7 +207,28 @@ To view the default initial effect for this assignment, you can either use the n
 <h3 class="h3-custom">Step 3: Render Optimized Gaussians</h3>
 <p class="mb-4">
     In this step, you must copy your generated Gaussian parameters for the target image and fill in the gaps in the <code class="code-inline">fragment.glsl</code> file to accurately show the list of gaussians. 
-    Your code will include building the inverse covariance matrix needed to place Gaussians in the scene and calculating the contribution of each Gaussian to the overall image field. This way, you can see your target gaussian splatting image on the class website.
+    You will essentially be implementing the same methods as in Step 0 so make sure to refer to the equations above for support and clarity.  This way, you can see your target gaussian splatting image on the class website.
+</p>
+
+<h3 class="h4-custom">Step 3.1: Import your Gaussian Parameters</h3>
+
+<p class="mb-4">    
+    Copy and paste the gaussian parameters that you generated in the Jupyter notebook into the specified area in the GLSL shader, similar to in previous projects.
+</p>
+
+<h3 class="h4-custom">Step 3.2: Build The GLSL Inverse Covariance Matrix</h3>
+
+<p class="mb-4">    
+    Like in Step 0.1, you will build the inverse covariance matrix for a single 2D Gaussian, using the provided rotation and scale vector. 
+    In order to do this, you must build the rotation matrix R and the diagonal inverse scaling matrix D (seen in the equations as (SS^T)).
+</p>
+
+<h3 class="h4-custom">Step 3.3: Accumulate contribution of Gaussians for image field</h3>
+
+<p class="mb-4">    
+    Like in Step 0.2, you will reconstruct the image by sampling multiple 2D Gaussians over a given 2D domain.
+    In order to do this for each gaussian, you must apply the inverse covariance matrix to the Gaussian's position to get the transformed position and apply the function f(p) to the transformed position as seen in the equation block above. 
+    Finally, you must multiply the alpha of the gaussian by the gaussian's contribution value f(p) to get the weighted contribution of this Gaussian that can be added to the image field.
 </p>
     
 <br>
@@ -169,8 +239,8 @@ Once you finish implementation of Step 1 - 2.3 with the Mona Lisa image, you sho
 </div>
 
 <h2 class="h2-custom">Creative Expression</h2>
-In the Creative Expression section of this assignment, you are encouraged to create both your own "synthethic" gaussian splatting scene and your own target image gaussian splatting scene. 
-While your "synthetic" scene must be made by initializing your own set of unique gaussians, you may choose to utilize a target image that you find online or one that you create yourself. 
+In the Creative Expression section of this assignment, you are encouraged to create both your own target image gaussian splatting scene. 
+You may choose to utilize a target image that you find online or one that you create yourself. 
 You are encouraged to play with the default parameters in the optimization model (ex. number of gaussians, learning rate, etc.) to see how these changes can impact your final result. 
 
 We expect your Creative Expression gaussian splatting scenes to demonstrate how gaussians can be used to represent complex scenes. The creative expression theme for this assignment is <strong>Artistic Effects</strong>.
@@ -178,9 +248,10 @@ We expect your Creative Expression gaussian splatting scenes to demonstrate how 
 <h2 class="h2-custom">Submission</h2>
 <ul class="list-disc pl-8 mb-4">
     <li>Your source code <code class="code-inline">2DGS_A3_solution.ipynb</code> and <code class="code-inline">fragment.glsl</code></li>
-    <li>Your creative "synthetic" gaussian splat image/video in the same format as the Mona Lisa image above</li>
-    <li>Your creative target gaussian splat image/video in the same format as the Mona Lisa image above</li>
-    <li>The answer to Reflection Question 1 from the Jupyter Notebook and a concise technical explanation of your implementation</li>
+    <li>Your customized "synthetic" gaussian splat image/video in the same format as the Mona Lisa image/video above</li>
+    <li>Your creative target gaussian splat image/video in the same format as the Mona Lisa image/video above</li>
+    <li>The answer to Reflection Question 1 in the Jupyter Notebook or on a seperate document</li>
+    <li>A concise technical explanation of your implementation</li>
 </ul>
 
 
