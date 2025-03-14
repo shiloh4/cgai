@@ -182,6 +182,12 @@ To view the default initial effect for this assignment, you can either use the n
     Here, we complete the same process as in Step 1, but customized for a target image of our choosing. 
     We begin by loading the target image (Ours is the Mona Lisa) in Step 2.1 and initializing a set of random Gaussians in Step 2.2 to optimize for the target image.
 </br>
+
+</br>
+Hint: When using colab, create a folder named <code>data</code> and upload your target image into it.
+
+</br>
+
 </br>
     You are asked to once again use your knowledge of optimization and loss functions from prior projects to fill in the gaps within the gaussian splatting optimization process in Step 2.3. 
     You will initialize the learning rate, optimizer, and loss function in Step 2.3.1 and implement the optimization loop in Step 2.3.2. 
@@ -216,7 +222,7 @@ To view the default initial effect for this assignment, you can either use the n
     Copy and paste the gaussian parameters that you generated in the Jupyter notebook into the specified area in the GLSL shader, similar to in previous projects.
 </p>
 
-<h3 class="h4-custom">Step 3.2: Build The GLSL Inverse Covariance Matrix</h3>
+<h3 class="h4-custom">Step 3.2: Build The GLSL Inverse Covariance Matrix (<code>buildSigmaInv</code>)</h3>
 
 <p class="mb-4">    
     Like in Step 0.1, you will build the inverse covariance matrix for a single 2D Gaussian, using the provided rotation and scale vector. 
@@ -232,11 +238,27 @@ To view the default initial effect for this assignment, you can either use the n
 </p>
     
 <br>
-Once you finish implementation of Step 1 - 2.3 with the Mona Lisa image, you should see the image shown below:
+Once you finish implementation of Step 1 - 2.3 with the Mona Lisa image, you should see the looping animation shown below:
 
-<div class="image-container">
+<!-- <div class="image-container">
     <img src="/assignments/A3_img/a3-ref.png" alt="Optimized Mona Lisa Output">
-</div>
+</div> -->
+
+<video controls autoplay loop muted>
+    <source src="/assignments/A3-ref2.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<h4 class="h4-custom">TA suggestion</h4>
+<p class="mb-4">    
+    You might want to implement 3.2 and 3.3 first before copying your Mona Lisa Gaussian parameters from the Jupyter notebook to the GLSL shader. When you use the default parameters provided in the shader, you should see a looping animation below.
+</p>
+
+<video controls autoplay loop muted>
+    <source src="/assignments/A3-ref1.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
 
 <h2 class="h2-custom">Creative Expression</h2>
 In the Creative Expression section of this assignment, you are encouraged to create both your own target image gaussian splatting scene. 
