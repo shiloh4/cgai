@@ -10,7 +10,7 @@ varying vec2 vUv;                   //// screen uv coordinates (varying, from ve
 uniform vec2 iResolution;           //// screen resolution (uniform, from CPU)
 uniform float iTime;                //// time elapsed (uniform, from CPU)
 uniform highp sampler3D iVolume;    //// volume texture
-#define PI 3.1415925359
+#define PI 3.1415925359;
 
 vec3 rotate(vec3 p, vec3 ax, float ro)
 {

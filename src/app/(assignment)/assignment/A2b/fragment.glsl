@@ -10,6 +10,8 @@ varying vec2 vUv;                   //// screen uv coordinates (varying, from ve
 uniform vec2 iResolution;           //// screen resolution (uniform, from CPU)
 uniform float iTime;                //// time elapsed (uniform, from CPU)
 
+#define PI 3.1415925359
+
 // ReLU function
 vec4 relu(vec4 x)
 {
@@ -502,7 +504,6 @@ vec4 queryNetwork(vec3 p){
     return vec4(out0, out1, out2, out3);
 }
 
-
 vec3 rotate(vec3 p) {
     return vec3(p.x, -p.z, p.y);
 }
@@ -546,12 +547,13 @@ vec4 volumeRendering(vec3 ro, vec3 rd, float near, float far, int n_samples, vec
         vec3 p = ro + t * rd; // Compute 3D sample position
 
         //// your implementation starts
+        p = rotate(p);
         vec4 f0 = queryNetwork(p);
         vec3 c = sigmoid(f0.rgb);
-        flat sigma = relu(f0.a);
-        float alpha = 1 - exp(-sigma * stepSize);
+        float sigma = relu(f0.a);
+        float alpha = 1.0 - exp(-sigma * stepSize);
         color += c * alpha * transmittance;
-        transmittance *= 1 - alpha;
+        transmittance *= (1.0 - alpha);
         //// your implementation ends
 
         //// early termination if opacity is high
