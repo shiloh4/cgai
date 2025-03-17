@@ -25,6 +25,7 @@
         font-weight: 500; /* equivalent to font-medium */
         margin-top: 1rem; /* equivalent to mt-4 */
         margin-bottom: 0.5rem; /* equivalent to mb-2 */
+        font-weight: bold;
     }
 
     /* Styling for code elements */
@@ -69,7 +70,7 @@
         gap: 20px; /* Space between images */
     }
     .image-container2 img {
-        width: 75%; /* Adjust width */
+        width: 50%; /* Adjust width */
         height: auto; /* Maintain aspect ratio */
     }
 
@@ -129,9 +130,45 @@ To view the default initial effect for this assignment, you can either use the n
 </p>
 
 <h3 class="h4-custom">Step 0.1: Build The Inverse Covariance Matrix</h3>
-<div class="image-container2">
-    <img src="/assignments/A3_img/a3_eq1.png" alt="Explanation of calculation for inverse covariance matrix for single 2D Gaussian">
-</div>
+
+<p>A 2D Gaussian is parameterized by:</p>
+    <ul>
+        <li>centers <b>c = [c_x,  c_y ]<sup>T</sup></b></li>
+        <li>scales <b> &sigma; = [&sigma;_x,  &sigma;_y ]<sup>T</sup></b></li>
+        <li>scalar rotation <b>&theta;</b> (Note: We could also use a unit-length complex number in the spirit of using quaternions in 3D, but a scalar rotation is perfectly fine.)</li>
+    </ul>
+
+    <p>Its value at point <b>p</b> is given by</p>
+
+    <div class="image-container2">
+        <img src="/assignments/A3_img/a3_eq1.png" alt="Explanation of 2D gaussian's value at specific point p">
+    </div>
+
+    <p>where the covariance matrix <b>&Sigma;</b> describes the shape of the Gaussian, and we build it as</p>
+
+    <div class="image-container2">
+        <img src="/assignments/A3_img/a3_eq2.png" alt="Explanation of 2D gaussian's covariance matrix creation">
+    </div>
+
+    <p>making use of (1) <b>(AB)<sup>-1</sup> = B<sup>-1</sup> A<sup>-1</sup>, and (2) R<sup>-1</sup> = R<sup>T</sup></b> for rotational matrices, we have</p>
+
+    <div class="image-container2">
+        <img src="/assignments/A3_img/a3_eq3.png" alt="Explanation of 2D gaussian's inverse covariance matrix creation">
+    </div>
+
+    <br>
+
+    <p>If we want to write out our 2D Gaussian function explicitly, we have:</p>
+
+    <div class="image-container2">
+        <img src="/assignments/A3_img/a3_eq4.png" alt="Equation representing 2D Gaussian function">
+    </div>
+
+    <p>where</p>
+
+    <div class="image-container2">
+        <img src="/assignments/A3_img/a3_eq5.png" alt="Expanded Equation of 2D gaussian's inverse covariance matrix creation">
+    </div>
 
 </br>
 
@@ -141,8 +178,25 @@ To view the default initial effect for this assignment, you can either use the n
 </p>
 
 <h3 class="h4-custom">Step 0.2: Accumulate contribution of Gaussians for image field</h3>
+
+<p>
+    To reconstruct a 2D image, we add together functions of this form, but also multiply them by an "alpha" channel.
+    In the original 3DGS implementation, they use a Gaussian-wise <b>(&alpha; &isin; &#8477;)</b> and RGB color 
+    <b>[c<sub>r</sub>, c<sub>g</sub>, c<sub>b</sub>] &isin; &#8477;<sup>3</sup> </b> (converted from spherical harmonics in 3D, given our current view direction).
+</p>
+
+<br>
+<p>
+    To simplify things here, we multiply these together, and store 
+    <b> &alpha; </b> = &alpha; &sdot; [c<sub>r</sub>, c<sub>g</sub>, c<sub>b</sub>] for each Gaussian.
+</p>
+
+<p>
+    Thus, we reconstruct each pixel <b>p</b> of our 2D image <b>I</b> by summing together contributions from <b>N</b> Gaussians as
+</p>
+
 <div class="image-container2">
-    <img src="/assignments/A3_img/a3_eq2.png" alt="Explanation of accumulation of Gaussian Contribution across image">
+    <img src="/assignments/A3_img/a3_eq6.png" alt="Explanation of accumulation of Gaussian Contribution across image">
 </div>
 
 </br>
