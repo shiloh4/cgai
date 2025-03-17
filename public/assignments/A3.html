@@ -56,11 +56,11 @@
 
     .image-container {
         display: flex; 
-        justify-content: center; /* Center images */
+        justify-content: left; /* Center images */
         gap: 20px; /* Space between images */
     }
     .image-container img {
-        width: 50%; /* Adjust width */
+        width: 25%; /* Adjust width */
         height: auto; /* Maintain aspect ratio */
     }
 
@@ -239,6 +239,9 @@ To view the default initial effect for this assignment, you can either use the n
 
 </br>
 Hint: When using colab, create a folder named <code>data</code> and upload your target image into it.
+<div class="image-container">
+    <img src="/assignments/A3_img/monalisaSetup.png" alt="Picture of colab setup of data folder">
+</div>
 
 </br>
 
@@ -247,6 +250,7 @@ Hint: When using colab, create a folder named <code>data</code> and upload your 
     You will initialize the learning rate, optimizer, and loss function in Step 2.3.1 and implement the optimization loop in Step 2.3.2. 
     Additionally, as part of our creative expression section, after you test with our sample image (The Mona Lisa), 
     add your own target image in Step 2.1 and optimize a new set of gaussians for your chosen target image. 
+    The optimal count of gaussians for our shader is 100-200 gaussians so avoid setting a super large number of Gaussians.
     <b>REMEMBER to save your optimization videos/images to turn in with your code! </b> 
 
 </br>
