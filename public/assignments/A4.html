@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 4: Rope Simulation with XPBD</title>
+    <script id="MathJax-script" defer 
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js">
+    </script>
+    <style>
+        .h1-custom { font-size: 2.25rem; font-weight: 700; margin-bottom: 1.5rem; }
+        .h2-custom { font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 1rem; }
+        .h3-custom { font-size: 1.25rem; font-weight: 500; margin-top: 1rem; margin-bottom: 0.5rem; }
+        .code-inline { font-family: 'Fira Code', Consolas, 'Courier New', monospace; font-size: 1.1rem; font-weight: bold; }
+        .link-inline { text-decoration: underline; color: #1d4ed8; font-family: 'Fira Code', Consolas, 'Courier New', monospace; font-size: 1.1rem; font-weight: bold; }
+        ul { list-style-type: disc; margin-left: 2rem; padding-left: 1.5rem; }
+        li { margin-bottom: 0.5rem; }
+    </style>
+</head>
+<body>
+    <h1 class="h1-custom">Assignment 4: Rope Simulation with XPBD</h1>
+    <p>Welcome to our exploration of physics-based simulation! In this assignment, you will learn the XPBD (Extended Position-Based Dynamics) simulation algorithm and implement a rope simulation in a GLSL shader. This assignment consists of six key steps: you will progressively complete functions to simulate a physically-based rope with constraint solving and visualize it in real time. Let’s dive in!</p>
+
+    <img width="100%" src="/assignments/a4-ref.gif" alt="Rope Simulation Video" class="img-custom">
+
+    
+    <h2 class="h2-custom">Steps</h2>
+    
+    <h3 class="h3-custom">Step 1: Screen to Simulation Space</h3>
+    <p>Implement <code class="code-inline">screen_to_xy()</code>:</p>
+    \[ \mathbf{x}_{\text{sim}} = \begin{cases}
+    x = (2u-1)\cdot R_x/R_y \\
+    y = 2v-1 \end{cases} \]
+    <ul>
+        <li>Maps screen pixels to aspect-ratio preserved coordinates</li>
+        <li>Input range [0,1]² ➔ Output [-A,A]×[-1,1] where A = aspect ratio</li>
+    </ul>
+
+    <h3 class="h3-custom">Step 2: Spring Constraint Error</h3>
+    <p>Implement <code class="code-inline">spring_error()</code>:</p>
+    \[ \epsilon = \| \mathbf{x}_a - \mathbf{x}_b \| - L_0 \]
+    <ul>
+        <li><code>s.a</code> and <code>s.b</code> are spring endpoints</li>
+        <li>Uses GLSL <code>distance()</code> function</li>
+    </ul>
+
+    <h3 class="h3-custom">Step 3: Constraint Gradient</h3>
+    <p>Implement normalized direction in <code class="code-inline">spring_error_gradient()</code>:</p>
+    \[ \nabla\epsilon_a = \frac{\mathbf{x}_a - \mathbf{x}_b}{\|\mathbf{x}_a - \mathbf{x}_b\|} \]
+    <ul>
+        <li>Add zero-length safeguard with <code>length()</code> check</li>
+    </ul>
+
+    <h3 class="h3-custom">Step 4: XPBD Solver</h3>
+    <p>In this step, we implement the constraint solving process in <code class="code-inline">solve_spring()</code>. The key task is to compute and apply the positional corrections for the particles connected by a spring. The Lagrangian multiplier, <code class="code-inline">lambda</code>, is calculated as:</p>
+    \[ \lambda = \frac{-\epsilon}{\underbrace{m_a^{-1}\|∇\epsilon_a\|^2 + m_b^{-1}\|∇\epsilon_b\|^2}_{\text{Mass Terms}} + \underbrace{\alpha/\Delta t^2}_{\text{Compliance}}} \]
+    
+    <p>Where:</p>
+    <ul>
+        <li><strong>Mass Terms</strong>: These terms correspond to the inverse masses of particles <code class="code-inline">a</code> and <code class="code-inline">b</code>, weighted by the squared gradients of the spring's error function with respect to the particles' positions.</li>
+        <li><strong>Compliance</strong>: This term accounts for the stiffness of the spring, represented by \(\alpha\), and includes a time-stepping factor \(\Delta t\).</li>
+    </ul>
+    
+    <p>The positional correction for each particle <code class="code-inline">k</code> is then computed as:</p>
+    \[ \Delta\mathbf{x}_k = \lambda m_k^{-1} \nabla\epsilon_k \]
+    
+    <ul>
+        <li>The inverse masses of the particles are stored in <code class="code-inline">inv_mass</code> (with 0 indicating a fixed particle).</li>
+        <li>The spring's stiffness is stored in <code class="code-inline">springs[i].inv_stiffness</code>.</li>
+    </ul>
+    
+
+    <h3 class="h3-custom">Step 5: Segment Distance Calculation</h3>
+    <p>In this step, we implement <code class="code-inline">dist_to_segment()</code>, which calculates the shortest distance from a point <code class="code-inline">p</code> to a line segment defined by two endpoints <code class="code-inline">a</code> and <code class="code-inline">b</code>. The formula for the distance is as follows:</p>
+    \[ d = \|\mathbf{p} - (\mathbf{a} + t^*\mathbf{e})\|,\; t^*=\text{clamp}\left(\frac{(\mathbf{p}-\mathbf{a})\cdot\mathbf{e}}{\|\mathbf{e}\|^2}, 0, 1\right) \]
+    
+    <p>Here, <code class="code-inline">e = b - a</code> is the vector representing the direction of the line segment from <code class="code-inline">a</code> to <code class="code-inline">b</code>. The projection factor \(t^*\) is clamped to ensure the projection remains within the bounds of the segment. The Euclidean distance is then calculated from point <code class="code-inline">p</code> to the closest point on the segment.</p>
+    
+    
+
+    <h3 class="h3-custom">Step 6: Anti-aliased Rendering</h3>
+    <p>In this step, we implement <code class="code-inline">render_scene()</code>, which visualizes the rope simulation. The function calculates the minimum distance from each pixel to the nearest particle or spring segment and blends the colors accordingly to create an anti-aliased effect. The background color is set to dark blue, and the final color depends on the proximity to the particles and springs.</p>
+    
+    <p>Your task here is to compute the minimum distance <code class="code-inline">min_dist</code> between each pixel and the nearest particle or spring. The min distance will be used to calculate the pixel color later.</p>
+    
+    
+        
+    <h2 class="h2-custom">Creative Expression</h2>
+    <p class="mb-4">
+        In the Creative Expression section of this assignment, you are encouraged to customize the initialization process in the code. Locate the part of the code responsible for initializing the scene or simulation and modify it to create your own version. The creative expression theme for this assignment is <strong>Dynamic Harmony</strong>.
+    </p>
+    
+    <h2 class="h2-custom">Submission</h2>
+    <ul class="list-disc pl-8 mb-4">
+        <li>Source code for <code>fragment.glsl.</code></li>
+        <li>Your default rendered video showcasing the results of your simulated rope.</li>
+        <li>Your customized video with the modified initialization for creative expression.</li>
+        <li>A concise technical explanation of your implementation.</li>
+    </ul>
+    
+    <h2 class="h2-custom">Grading</h2>
+    <p>This assignment is worth a total of 8 points, with the grading criteria outlined as follows:</p>
+    <ul class="list-disc pl-8 mb-4">
+        <li>
+            <strong>Technical Contribution (6 points):</strong>
+            <ul class="list-disc pl-8 mb-4">
+                <li>Each step 1 point</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Creative Expression (2 points):</strong> This aspect focuses on your ability to creatively modify the initialization process and present a new result.
+        </li>
+    </ul>
+    
+    <h2 class="h2-custom">Sharing Your Work</h2>
+    <p>You are encouraged to share your graphical work with the class. If you want to do so, please upload your image to the Ed Discussion post <strong>A4 Gallery: Dynamic Harmony</strong>. This is an excellent opportunity to engage with your peers and gain recognition for your work. Share with us your unique approach to the theme of dynamic harmony!</p>
+    
+    <h2 class="h2-custom">Troubleshooting Tips</h2>
+    <p>If you notice significant jitter or instability in your simulation results, try adjusting the zoom level of the window and refresh the display. If the issue persists, please reach out to the teaching assistant for further assistance.</p>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          if (window.MathJax) {
+            MathJax.typesetPromise().then(() => {
+              console.log("MathJax successfully rendered formulas!");
+            }).catch((err) => console.error("MathJax rendering failed:", err));
+          } else {
+            console.error("MathJax failed to load.");
+          }
+        });
+      </script>      
+</body>
+</html>
