@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignment 4: Rope Simulation with XPBD</title>
+    <title>Assignment 4: XPBD Simulation with Springs, Collisions and Ground</title>
     <script id="MathJax-script" defer 
         src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.js">
     </script>
@@ -18,74 +18,120 @@
     </style>
 </head>
 <body>
-    <h1 class="h1-custom">Assignment 4: Rope Simulation with XPBD</h1>
-    <p>Welcome to our exploration of physics-based simulation! In this assignment, you will learn the XPBD (Extended Position-Based Dynamics) simulation algorithm and implement a rope simulation in a GLSL shader. This assignment consists of six key steps: you will progressively complete functions to simulate a physically-based rope with constraint solving and visualize it in real time. Let’s dive in!</p>
+    <h1 class="h1-custom">Assignment 4: XPBD Simulation with Springs, Collisions and Ground</h1>
 
-    <img width="100%" src="/assignments/a4-ref.gif" alt="Rope Simulation Video" class="img-custom">
+    <p>Welcome to our exploration of physics-based simulation! In this assignment, you will learn the XPBD (Extended Position-Based Dynamics) simulation algorithm and implement a rope simulation in a GLSL shader. This assignment focuses on simulating a rope using springs, ground constraints, and collision handling. By the end of this assignment, you will have a working simulation that visualizes particle interactions in real time. Let’s dive in!</p>
 
+    <video controls autoplay loop muted style="max-width: 100%; height: auto;">
+        <source src="/assignments/A4-ref.mp4" type="video/mp4">
+        A4 Reference Video
+    </video>
     
     <h2 class="h2-custom">Steps</h2>
     
-    <h3 class="h3-custom">Step 1: Screen to Simulation Space</h3>
-    <p>Implement <code class="code-inline">screen_to_xy()</code>:</p>
-    \[ \mathbf{x}_{\text{sim}} = \begin{cases}
-    x = (2u-1)\cdot R_x/R_y \\
-    y = 2v-1 \end{cases} \]
+    <h3 class="h3-custom">Step 1: Spring Constraint (1pt)</h3>
+    <p>Implement the positional constraint for elastic springs in <code class="code-inline">spring_constraint()</code>:</p>
+    \[ \epsilon_{\text{spring}} = \underbrace{\| \mathbf{x}_a - \mathbf{x}_b \|}_{\text{current length}} - \underbrace{L_0}_{{\text{rest length}}} \]
+    
+    <h3 class="h3-custom">Step 2: Spring Constraint Gradient (1pt)</h3>
+    <p>Derive the constraint Jacobian in <code class="code-inline">spring_constraint_gradient()</code>:</p>
+    \[ \nabla\epsilon_{\text{spring}} = \frac{\mathbf{x}_a - \mathbf{x}_b}{\|\mathbf{x}_a - \mathbf{x}_b\|} \]
     <ul>
-        <li>Maps screen pixels to aspect-ratio preserved coordinates</li>
-        <li>Input range [0,1]² ➔ Output [-A,A]×[-1,1] where A = aspect ratio</li>
+        <li><strong>Note:</strong> Handle singularity for \( \|\mathbf{x}_a - \mathbf{x}_b\| = 0 \) by returning \((0,0).\)</li>
     </ul>
 
-    <h3 class="h3-custom">Step 2: Spring Constraint Error</h3>
-    <p>Implement <code class="code-inline">spring_error()</code>:</p>
-    \[ \epsilon = \| \mathbf{x}_a - \mathbf{x}_b \| - L_0 \]
+    <h3 class="h3-custom">Step 3: Solve for Springs with XPBD (2pt)</h3>
+    <p>Solve the constrained optimization problem in <code class="code-inline">solve_spring()</code>:</p>
+    \[ \lambda = \frac{-\epsilon_{\text{spring}}}{\underbrace{\sum m^{-1}\|∇\epsilon_\text{spring}\|^2}_{\text{inertial term}} + \underbrace{\alpha/\Delta t^2}_{{\text{compliance term}}}} \]
     <ul>
-        <li><code>s.a</code> and <code>s.b</code> are spring endpoints</li>
-        <li>Uses GLSL <code>distance()</code> function</li>
+        <li>\( m \) = particle mass (\( m^{-1} \) stored in <code>inv_mass</code>)</li>
+        <li>You do not need to calculate the compliance term since it's provided in the code.</li>
     </ul>
 
-    <h3 class="h3-custom">Step 3: Constraint Gradient</h3>
-    <p>Implement normalized direction in <code class="code-inline">spring_error_gradient()</code>:</p>
-    \[ \nabla\epsilon_a = \frac{\mathbf{x}_a - \mathbf{x}_b}{\|\mathbf{x}_a - \mathbf{x}_b\|} \]
+    <h3 class="h3-custom">Step 4: Collision Constraint (1pt)</h3>
+    <p>Implement <code class="code-inline">collision_constraint()</code>:</p>
+    \[ \epsilon_{\text{coll}} = \begin{cases} 
+    \| \mathbf{x}_a - \mathbf{x}_b \| - d_{\text{min}} & \text{if } \|\mathbf{x}_a - \mathbf{x}_b\| < d_{\text{min}} \\
+    0 & \text{otherwise}
+    \end{cases} \]
     <ul>
-        <li>Add zero-length safeguard with <code>length()</code> check</li>
+        <li>It's equivalent to adding a spring when two particles are close enough.</li>
+        <li>\( d_{\text{min}} = 0.2 \) is given by the parameter collision_dist </li>
     </ul>
 
-    <h3 class="h3-custom">Step 4: XPBD Solver</h3>
-    <p>In this step, we implement the constraint solving process in <code class="code-inline">solve_spring()</code>. The key task is to compute and apply the positional corrections for the particles connected by a spring. The Lagrangian multiplier, <code class="code-inline">lambda</code>, is calculated as:</p>
-    \[ \lambda = \frac{-\epsilon}{\underbrace{m_a^{-1}\|∇\epsilon_a\|^2 + m_b^{-1}\|∇\epsilon_b\|^2}_{\text{Mass Terms}} + \underbrace{\alpha/\Delta t^2}_{\text{Compliance}}} \]
-    
-    <p>Where:</p>
+    <h3 class="h3-custom">Step 5: Collision Constraint Gradient (1pt)</h3>
+    <p>Compute contact normal vector in <code class="code-inline">collision_constraint_gradient()</code>:</p>
+    \[ \nabla\epsilon_{\text{coll}} = \begin{cases}
+    \frac{\mathbf{x}_a - \mathbf{x}_b}{\|\mathbf{x}_a - \mathbf{x}_b\|} & \|\mathbf{x}_a - \mathbf{x}_b\| < d_{\text{min}} \\
+    \mathbf{0} & \text{otherwise}
+    \end{cases} \]
+
+    <h3 class="h3-custom">Step 6: Solve for Collisions with XPBD (2pt)</h3>
+    <p>Implement the collision solver in <code class="code-inline">solve_collision_constraint()</code> using XPBD:</p>
+    \[ \lambda = \frac{-\epsilon_{\text{coll}}}{\underbrace{\sum m^{-1}\|∇\epsilon_\text{coll}\|^2}_{\text{inertial term}} + \underbrace{\alpha/\Delta t^2}_{{\text{compliance term}}}} \]
     <ul>
-        <li><strong>Mass Terms</strong>: These terms correspond to the inverse masses of particles <code class="code-inline">a</code> and <code class="code-inline">b</code>, weighted by the squared gradients of the spring's error function with respect to the particles' positions.</li>
-        <li><strong>Compliance</strong>: This term accounts for the stiffness of the spring, represented by \(\alpha\), and includes a time-stepping factor \(\Delta t\).</li>
+        <li>Similar to the spring solver, but now using the collision constraint.</li>
+        <li>You again don't need to calculate the compliance term since it's already provided.</li>
     </ul>
+
+    <h3 class="h3-custom">Step 7: Ground Constraint (1pt)</h3>
+    <p>Implement ground constraint in <code class="code-inline">ground_constraint()</code> to prevent particles from penetrating the ground surface.</p>
+
+    <p>The ground constraint is defined as:</p>
+    \[
+    \epsilon_{\text{ground}}(p) =
+    \begin{cases}
+    \phi(p) - d_{\text{ground}}, & \text{if } \phi(p) < d_{\text{ground}} \\
+    0, & \text{otherwise}
+    \end{cases}
+    \]
+    where \( \phi(p) \) represents the signed distance function (SDF) of the ground, and \( d_{\text{ground}} \) is the threshold distance for collision detection. It is given by the parameter ground_collision_dist.</p>
+
+
+    <h3 class="h3-custom">Step 8: Compute Ground Constraint Gradient (2pt)</h3>
+    <p>Implement <code class="code-inline">ground_constraint_gradient()</code> to compute the gradient of the ground constraint, which is necessary for applying position corrections.</p>
     
-    <p>The positional correction for each particle <code class="code-inline">k</code> is then computed as:</p>
-    \[ \Delta\mathbf{x}_k = \lambda m_k^{-1} \nabla\epsilon_k \]
+    <p>The constraint gradient is given by:</p>
+    \[
+    \nabla \epsilon_{\text{ground}} =
+    \begin{cases}
+    \nabla \phi(p), & \text{if } \phi(p) < d_{\text{ground}} \\
+    (0,0), & \text{otherwise}
+    \end{cases}
+    \]
     
-    <ul>
-        <li>The inverse masses of the particles are stored in <code class="code-inline">inv_mass</code> (with 0 indicating a fixed particle).</li>
-        <li>The spring's stiffness is stored in <code class="code-inline">springs[i].inv_stiffness</code>.</li>
-    </ul>
+    <p>Since the signed distance function (SDF) of the ground is defined as:</p>
+    \[
+    \phi(p) = p_y - (0.1 \sin(2\pi p_x) - 0.5),
+    \]
+    its gradient is computed as:
+    \[
+    \frac{\partial \phi}{\partial p_x} = -0.1 \cdot 2\pi \cos(2\pi p_x), \quad
+    \frac{\partial \phi}{\partial p_y} = 1.0.
+    \]
     
 
-    <h3 class="h3-custom">Step 5: Segment Distance Calculation</h3>
-    <p>In this step, we implement <code class="code-inline">dist_to_segment()</code>, which calculates the shortest distance from a point <code class="code-inline">p</code> to a line segment defined by two endpoints <code class="code-inline">a</code> and <code class="code-inline">b</code>. The formula for the distance is as follows:</p>
-    \[ d = \|\mathbf{p} - (\mathbf{a} + t^*\mathbf{e})\|,\; t^*=\text{clamp}\left(\frac{(\mathbf{p}-\mathbf{a})\cdot\mathbf{e}}{\|\mathbf{e}\|^2}, 0, 1\right) \]
+    <h3 class="h3-custom">Step 9: Solve for Ground Constraints with XPBD (2pt)</h3>
+    <p>Implement the ground constraint solver in <code class="code-inline">solve_ground_constraint()</code> using XPBD:</p>
     
-    <p>Here, <code class="code-inline">e = b - a</code> is the vector representing the direction of the line segment from <code class="code-inline">a</code> to <code class="code-inline">b</code>. The projection factor \(t^*\) is clamped to ensure the projection remains within the bounds of the segment. The Euclidean distance is then calculated from point <code class="code-inline">p</code> to the closest point on the segment.</p>
+    \[
+    \lambda = \frac{-\epsilon_{\text{ground}}}{\underbrace{m^{-1} \|\nabla\epsilon_{\text{ground}}\|^2}_{\text{inertial term}} + \underbrace{\alpha/\Delta t^2}_{{\text{compliance term}}}}
+    \]
     
+    You still don't need to calculate the compliance term since it's provided in the code.
     
 
-    <h3 class="h3-custom">Step 6: Anti-aliased Rendering</h3>
-    <p>In this step, we implement <code class="code-inline">render_scene()</code>, which visualizes the rope simulation. The function calculates the minimum distance from each pixel to the nearest particle or spring segment and blends the colors accordingly to create an anti-aliased effect. The background color is set to dark blue, and the final color depends on the proximity to the particles and springs.</p>
+    <h3 class="h3-custom">Step 10: Solve All Constraints (3pt)</h3>
+    <p>Implement the full constraint solver in <code class="code-inline">solve_constraints()</code>using previously defined functions:</p>
     
-    <p>Your task here is to compute the minimum distance <code class="code-inline">min_dist</code> between each pixel and the nearest particle or spring. The min distance will be used to calculate the pixel color later.</p>
-    
-    
+    <ul>
+        <li><strong>Spring constraints:</strong> Solve all spring constraints defined in <code class="code-inline">springs[1]</code> to <code class="code-inline">springs[n_springs - 1]</code> using <code class="code-inline">solve_spring()</code>.</li>
+        <li><strong>Ground constraints:</strong> Solve for all particles (except the mouse-controlled particle \( 0 \)) using <code class="code-inline">solve_ground_constraint()</code>.</li>
+        <li><strong>Collision constraints:</strong> Solve pairwise collisions for all particles (except the mouse particle \( 0 \)) using <code class="code-inline">solve_collision_constraint()</code>.</li>
+    </ul>
         
-    <h2 class="h2-custom">Creative Expression</h2>
+        
+    <h2 class="h2-custom">Creative Expression (2pt)</h2>
     <p class="mb-4">
         In the Creative Expression section of this assignment, you are encouraged to customize the initialization process in the code. Locate the part of the code responsible for initializing the scene or simulation and modify it to create your own version. The creative expression theme for this assignment is <strong>Dynamic Harmony</strong>.
     </p>
@@ -98,25 +144,8 @@
         <li>A concise technical explanation of your implementation.</li>
     </ul>
     
-    <h2 class="h2-custom">Grading</h2>
-    <p>This assignment is worth a total of 8 points, with the grading criteria outlined as follows:</p>
-    <ul class="list-disc pl-8 mb-4">
-        <li>
-            <strong>Technical Contribution (6 points):</strong>
-            <ul class="list-disc pl-8 mb-4">
-                <li>Each step 1 point</li>
-            </ul>
-        </li>
-        <li>
-            <strong>Creative Expression (2 points):</strong> This aspect focuses on your ability to creatively modify the initialization process and present a new result.
-        </li>
-    </ul>
-    
     <h2 class="h2-custom">Sharing Your Work</h2>
     <p>You are encouraged to share your graphical work with the class. If you want to do so, please upload your image to the Ed Discussion post <strong>A4 Gallery: Dynamic Harmony</strong>. This is an excellent opportunity to engage with your peers and gain recognition for your work. Share with us your unique approach to the theme of dynamic harmony!</p>
-    
-    <h2 class="h2-custom">Troubleshooting Tips</h2>
-    <p>If you notice significant jitter or instability in your simulation results, try adjusting the zoom level of the window and refresh the display. If the issue persists, please reach out to the teaching assistant for further assistance.</p>
     
     <script>
         document.addEventListener("DOMContentLoaded", function() {
