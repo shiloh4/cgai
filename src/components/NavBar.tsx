@@ -42,6 +42,11 @@ const tutorials: { title: string; href: string; description: string }[] = [
     href: '/tutorial/pytorch-tutorial',
     description: 'Pytorch Tutorial',
   },
+  {
+    title: 'Mass Spring System',
+    href: '/tutorial/mass-spring-tutorial',
+    description: 'Mass Spring System',
+  }
 ];
 
 const assignments: { title: string; href: string; description: string }[] = [
