@@ -52,7 +52,7 @@ const renderTargetsB = useRef([
 
 
 
-  const createShaderMesh = (fragmentShader, channels = []) => {
+  const createShaderMesh = (fragmentShader: string, channels: THREE.WebGLRenderTarget[] = []) => {
     const uniforms = {
       ...commonUniforms,
     };
