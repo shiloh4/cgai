@@ -9,50 +9,51 @@ import vertexShader from '@/shaders/common/vertex.glsl';
 import bufferAShader from './bufferA.glsl';
 import bufferBShader from './bufferB.glsl';
 import imageShader from './image.glsl';
-import useDevicePixelRatio from '@/hooks/useDevicePixelRatio';
 
-const ShadertoyRenderer = () => {
+const ShadertoyRenderer = ({ dpr }: { dpr: number }) => {
   const { viewport, gl, camera } = useThree();
-  const dpr = useDevicePixelRatio();
 
   // Common uniforms
   const commonUniforms = useRef({
     iTime: { value: 0 },
     iTimeDelta: { value: 0 },
     iFrame: { value: 0 },
-    iResolution: { value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr) },
+    iResolution: {
+      value: new THREE.Vector2(window.innerWidth * dpr, window.innerHeight * dpr),
+    },
     iMouse: { value: new THREE.Vector4(0, 0, 0, 0) },
   }).current;
 
-// Render targets for double-buffering
-const renderTargetsA = useRef([
-  new THREE.WebGLRenderTarget(window.innerWidth * dpr, window.innerHeight * dpr, {
-    format: THREE.RGBAFormat,
-    type: THREE.FloatType,
-  }),
-  new THREE.WebGLRenderTarget(window.innerWidth * dpr, window.innerHeight * dpr, {
-    format: THREE.RGBAFormat,
-    type: THREE.FloatType,
-  }),
-]).current;
+  // Render targets for double-buffering
+  const renderTargetsA = useRef([
+    new THREE.WebGLRenderTarget(window.innerWidth * dpr, window.innerHeight * dpr, {
+      format: THREE.RGBAFormat,
+      type: THREE.FloatType,
+    }),
+    new THREE.WebGLRenderTarget(window.innerWidth * dpr, window.innerHeight * dpr, {
+      format: THREE.RGBAFormat,
+      type: THREE.FloatType,
+    }),
+  ]).current;
 
-const renderTargetsB = useRef([
-  new THREE.WebGLRenderTarget(window.innerWidth * dpr, window.innerHeight * dpr, {
-    format: THREE.RGBAFormat,
-    type: THREE.FloatType,
-  }),
-  new THREE.WebGLRenderTarget(window.innerWidth * dpr, window.innerHeight * dpr, {
-    format: THREE.RGBAFormat,
-    type: THREE.FloatType,
-  }),
-]).current;
+  const renderTargetsB = useRef([
+    new THREE.WebGLRenderTarget(window.innerWidth * dpr, window.innerHeight * dpr, {
+      format: THREE.RGBAFormat,
+      type: THREE.FloatType,
+    }),
+    new THREE.WebGLRenderTarget(window.innerWidth * dpr, window.innerHeight * dpr, {
+      format: THREE.RGBAFormat,
+      type: THREE.FloatType,
+    }),
+  ]).current;
 
   const bufferIndex = useRef(0);
   let lastTime = performance.now();
 
-
-
-  const createShaderMesh = (fragmentShader: string, channels: THREE.WebGLRenderTarget[] = []) => {
+  const createShaderMesh = (
+    fragmentShader: string,
+    channels: THREE.WebGLRenderTarget[] = []
+  ) => {
     const uniforms: Record<string, { value: any }> = {
       ...commonUniforms,
     };
@@ -80,15 +81,20 @@ const renderTargetsB = useRef([
     lastTime = now;
     commonUniforms.iTime.value += commonUniforms.iTimeDelta.value;
     commonUniforms.iFrame.value++;
-    commonUniforms.iResolution.value.set(window.innerWidth * dpr, window.innerHeight * dpr);
+    commonUniforms.iResolution.value.set(
+      window.innerWidth * dpr,
+      window.innerHeight * dpr
+    );
 
     // Scenes for separate rendering
     const bufferAScene = new THREE.Scene();
     const bufferBScene = new THREE.Scene();
     // Buffer A
-    const bufferAMesh = createShaderMesh(bufferAShader, [renderTargetsA[1 - bufferIndex.current]]);
+    const bufferAMesh = createShaderMesh(bufferAShader, [
+      renderTargetsA[1 - bufferIndex.current],
+    ]);
     bufferAScene.add(bufferAMesh);
-    
+
     // Buffer B
     const bufferBMesh = createShaderMesh(bufferBShader, [
       renderTargetsA[bufferIndex.current],
@@ -96,12 +102,9 @@ const renderTargetsB = useRef([
     ]);
     bufferBScene.add(bufferBMesh);
 
-
-
     // Swap buffers
     const currentA = bufferIndex.current;
     const currentB = bufferIndex.current;
-
 
     // Render Buffer A
     gl.setRenderTarget(renderTargetsA[currentA]);
@@ -160,8 +163,10 @@ const renderTargetsB = useRef([
 };
 
 export default function ShaderPage() {
+  const dpr = 1;
   return (
     <Canvas
+      dpr={dpr}
       orthographic
       camera={{ position: [0, 0, 6] }}
       style={{
@@ -173,7 +178,7 @@ export default function ShaderPage() {
       }}
     >
       <Suspense fallback={null}>
-        <ShadertoyRenderer />
+        <ShadertoyRenderer dpr={dpr} />
       </Suspense>
     </Canvas>
   );
