@@ -81,11 +81,11 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.
 </style>
 
 <h1 class="h1-custom">
-    Assignment 4: XPBD Simulation with Springs, Collisions and Ground
+    Assignment 4: Position-based Dynamics
 </h1>
 
 <p class="mb-4">
-    Welcome to our exploration of physics-based simulation! In this assignment, you will learn the XPBD (Extended Position-Based Dynamics) simulation algorithm and implement a rope simulation in a GLSL shader. This assignment focuses on simulating a rope using springs, ground constraints, and collision handling. By the end of this assignment, you will have a working simulation that visualizes particle interactions in real time. Let’s dive in!
+    Welcome to our exploration of physics-based simulation! In this assignment, you will learn the XPBD (Extended Position-Based Dynamics) simulation algorithm and implement a physics simulator in a GLSL shader. This assignment focuses on simulating particles using distance, collision, and ground constraints. By the end of this assignment, you will have a working simulation that visualizes particle interactions in real time. Let’s dive in!
 </p>
 
 
@@ -95,7 +95,7 @@ src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.0/es5/tex-mml-chtml.min.
 </p>
 
 <ul class="list-disc pl-8 mb-4">
-    <li>Course Slides on XPBD Simulation</li>
+    <li>Course Slides on Particle-based Simulation and Position-based Dynamics</li>
     <li><a href="https://matthias-research.github.io/pages/publications/posBasedDyn.pdf/" class="link-inline">Original Position Based Dynamics (PBD) Paper</a>
     <li><a href="https://mmacklin.com/2017-EG-CourseNotes.pdf" class="link-inline">A Survey on Position Based Dynamics</a>
     <li><a href="https://matthias-research.github.io/pages/publications/XPBD.pdf" class="link-inline">Extended Position Based Dynamics (XPBD) Paper</a>
@@ -133,7 +133,7 @@ To view the default initial effect for this assignment, you can either use the n
 
 <h3 class="h4-custom">Step 1.2: Spring Constraint Gradient</h3>
 <p class="mb-4">
-    Derive the constraint Jacobian in <code class="code-inline">spring_constraint_gradient()</code>:
+    Implement the constraint Jacobian in <code class="code-inline">spring_constraint_gradient()</code>:
     \[ \nabla\epsilon_{\text{spring}} = \frac{\mathbf{x}_a - \mathbf{x}_b}{\|\mathbf{x}_a - \mathbf{x}_b\|} \]
     <ul>
         <li><strong>Note:</strong> Handle singularity for \( \|\mathbf{x}_a - \mathbf{x}_b\| = 0 \) by returning \((0,0).\)</li>
@@ -254,7 +254,6 @@ To view the default initial effect for this assignment, you can either use the n
     </ul>
 </p>
 
-
 <p>Once you implemented all steps, you should simulate the particle system similar to the video shown below:</p>
 
 <video controls autoplay loop muted style="max-width: 75%; height: auto;">
@@ -291,12 +290,12 @@ To view the default initial effect for this assignment, you can either use the n
         </ul>
     </li>
     <li>
-        <strong>Creative Expression (2 points):</strong> This aspect focuses on your ability to create unique XPBD simulations. The theme for the creative expression is <strong>Dynamic Harmony</strong>.
+        <strong>Creative Expression (2 points):</strong> This aspect focuses on your ability to create different XPBD simulations. You are encouraged to explore different types of constraints, shapes, and the ways to initialize points in the scene. The theme for the creative expression is <strong>Physics on Points</strong>.
     </li>
 </ul>
 
 <h2 class="h2-custom">Sharing Your Work</h2>
-<p>You are encouraged to share your graphical work with the class. If you want to do so, please upload your image to the Ed Discussion post <strong>A4 Gallery: Dynamic Harmony</strong>. This is an excellent opportunity to engage with your peers and gain recognition for your work. Share with us your unique approach to the theme of dynamic harmony!</p>
+<p>You are encouraged to share your graphical work with the class. If you want to do so, please upload your image to the Ed Discussion post <strong>A4 Gallery: Physics on Points</strong>. This is an excellent opportunity to engage with your peers and gain recognition for your work. Share with us your unique demo of real-time physics!</p>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
