@@ -100,6 +100,16 @@ const assignments: { title: string; href: string; description: string }[] = [
     href: '/assignment/A3_doc',
     description: 'A3 Document: Gaussian Splatting',
   },
+  {
+    title: 'Assignment 4 Demo',
+    href: '/assignment/A4',
+    description: 'A4 Demo: Mass Spring System',
+  },
+  {
+    title: 'Assignment 4 Doc',
+    href: '/assignment/A4_doc',
+    description: 'A4 Document: Mass Spring System',
+  }
 ];
 
 export function NavBar() {
