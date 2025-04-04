@@ -103,12 +103,12 @@ const assignments: { title: string; href: string; description: string }[] = [
   {
     title: 'Assignment 4 Demo',
     href: '/assignment/A4',
-    description: 'A4 Demo: Mass Spring System',
+    description: 'A4 Demo: Position-based Dynamics',
   },
   {
     title: 'Assignment 4 Doc',
     href: '/assignment/A4_doc',
-    description: 'A4 Document: Mass Spring System',
+    description: 'A4 Document: Position-based Dynamics',
   }
 ];
 

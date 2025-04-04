@@ -45,7 +45,7 @@ export default function AssignmentPage() {
               CS8803/4803 CGA: Computer Graphics in AI Era
             </p>
             <p className="text-2xl font-[family-name:var(--font-geist-mono)] mt-2 leading-relaxed">
-              Assignment 3: Gaussian Splatting
+              Assignment 4: Position-based Dynamics
             </p>
           </div>
         </div>
