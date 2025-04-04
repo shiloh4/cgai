@@ -42,7 +42,9 @@ vec3 palette(in float t)
   vec3 a = vec3(0.5, 0.5, 0.5);
   vec3 b = vec3(0.5, 0.5, 0.5);
   vec3 c = vec3(1.0, 1.0, 1.0);
-  vec3 d = vec3(0.0, 0.25, 0.25);
+//   vec3 d = vec3(0.0, 0.25, 0.25);
+  vec3 d = vec3(0.0, 0.10, 0.20);
+
 
   vec3 color = a + b * cos(6.28318 * (c * t + d));
 //   color = (color - 0.5) * 2.2 + 0.5; // add contrast
@@ -119,7 +121,8 @@ vec4 readSDFVolume(vec3 p)
     // float distance = sdBox(p, vec3(1.0));
     // float distance = sdSphere(p, 1.0);
     vec3 animatedP = rotate(p, vec3(0.0, 1.0, 0.0), iTime);
-    float distance = mandelbulb(animatedP);
+    float distance = sdSphere(p, 1.0);
+    // float distance = mandelbulb(animatedP);
 
     //// convert sdf value to a color
 
