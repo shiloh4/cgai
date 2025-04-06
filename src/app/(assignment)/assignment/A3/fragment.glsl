@@ -88,7 +88,10 @@ mat2 buildSigmaInv(float theta, vec2 sigma)
     // BEGINNING OF YOUR CODE.
     //////////
     mat2 R = mat2(cos(theta), -sin(theta), sin(theta), cos(theta)); 
-    mat2 D = mat2(1.0 / (sigma.x * sigma.x), 0.0, 0.0, 1.0 / (sigma.y * sigma.y)); 
+    float eps = 0.001;
+    float sigmaX = max(abs(sigma.x), eps);
+    float sigmaY = max(abs(sigma.y), eps);
+    mat2 D = mat2(1.0 / (sigmaX * sigmaX), 0.0, 0.0, 1.0 / (sigmaY * sigmaY));
     cov_mat = R * D * transpose(R);
 
     /////////// 
