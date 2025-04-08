@@ -109,11 +109,6 @@ const assignments: { title: string; href: string; description: string }[] = [
     title: 'Assignment 4 Doc',
     href: '/assignment/A4_doc',
     description: 'A4 Document: Position-based Dynamics',
-  },
-  {
-    title: 'Final Project Doc',
-    href: '/assignment/Final_doc',
-    description: 'Final Project Document',
   }
 ];
 
@@ -148,6 +143,18 @@ export function NavBar() {
               ))}
             </ul>
           </NavigationMenuContent>
+        </NavigationMenuItem>
+        {/* Final Project */}
+        <NavigationMenuItem>
+          <Link
+            href="/assignment/Final_doc"
+            legacyBehavior
+            passHref
+          >
+            <NavigationMenuLink className={navigationMenuTriggerStyle()}>
+              Final Project
+            </NavigationMenuLink>
+          </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
           <Link href="https://github.com/cg-gatech/cgai" legacyBehavior passHref>
