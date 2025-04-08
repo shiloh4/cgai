@@ -38,7 +38,7 @@ export default function AssignmentPage() {
               CS8803/4803 CGA: Computer Graphics in AI Era
             </p>
             <p className="text-2xl font-[family-name:var(--font-geist-mono)] mt-2 leading-relaxed">
-              Final Project: World
+              Final Project: Dream World
             </p>
           </div>
         </div>
