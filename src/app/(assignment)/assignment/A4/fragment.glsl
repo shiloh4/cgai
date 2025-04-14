@@ -198,7 +198,9 @@ float spring_constraint(Spring s) {
     // and L0 = s.restLength is the rest length of the spring.
 
     //// Your implementation starts
-    return 0.;
+    float L = length(particles[s.a].pos - particles[s.b].pos);
+    float L0 = s.restLength;
+    return L - L0;
     //// Your implementation ends
 }
 
@@ -212,7 +214,12 @@ vec2 spring_constraint_gradient(vec2 a, vec2 b) {
     // Think: what is the gradient of (a-b) with respect to a?
 
     //// Your implementation starts
-    return vec2(0.);
+    if (a == b) {
+        return vec2(0,0);
+    }
+
+    vec2 gradient = normalize(a - b);
+    return gradient;
     //// Your implementation ends
 }
 
@@ -234,8 +241,11 @@ void solve_spring(Spring s, float dt) {
     float denom = 0.;
 
     //// Your implementation starts
-    vec2 grad_a = vec2(0.); // only keep for the sake of the compiler
-    vec2 grad_b = vec2(0.); // only keep for the sake of the compiler
+    numer = -1.0 * spring_constraint(s);
+
+    vec2 grad_a = spring_constraint_grad(s, s.a); // only keep for the sake of the compiler
+    vec2 grad_b = spring_constraint_grad(s, s.b); // only keep for the sake of the compiler
+    denom = particles[s.a].inv_mass * dot(grad_a, grad_a) + particles[s.b].inv_mass * dot(grad_b, grad_b);
     //// Your implementation ends
 
     // PBD if you comment out the following line
@@ -262,7 +272,7 @@ float collision_constraint(vec2 a, vec2 b, float collision_dist){
     float dist = length(a - b);
     if(dist < collision_dist){
         //// Your implementation starts
-        return 0.0;
+        return dist - collision_dist;
         //// Your implementation ends
     }
     else{
@@ -283,7 +293,7 @@ vec2 collision_constraint_gradient(vec2 a, vec2 b, float collision_dist){
     float dist = length(a - b);
     if(dist <= collision_dist){
         //// Your implementation starts
-        return vec2(0.0);
+        return normalize(a - b);
         //// Your implementation ends
     }
     else{
@@ -305,7 +315,10 @@ void solve_collision_constraint(int i, int j, float collision_dist, float dt){
     float denom = 0.0;
 
     //// Your implementation starts
-    vec2 grad = vec2(0); // only keep for the sake of the compiler
+    numer = -collision_constraint(particles[i].pos, particles[j].pos, collision_dist);
+
+    vec2 grad = collision_constraint_gradient(particles[i].pos, particles[j].pos, collision_dist); // only keep for the sake of the compiler
+    denom = particles[i].inv_mass * dot(grad, grad) + particles[j].inv_mass * dot(grad, grad);
     //// Your implementation ends
 
     //PBD if you comment out the following line, which is faster
@@ -320,7 +333,19 @@ void solve_collision_constraint(int i, int j, float collision_dist, float dt){
 float phi(vec2 p){
     const float PI = 3.14159265359;
     //let's do sin(x)+0.5
-    return p.y - (0.1 * sin(p.x * 2. * PI) - 0.5);
+    return p.y - (0.1 * sin(p.x * 0.5 * PI) - 0.5);
+}
+
+float sdfWaterfall(vec2 p) {
+    const float PI = 3.14159265359;
+    float denom = tan(p.y * 0.5 * PI + 1.5);
+
+    if (abs(denom) < 0.0001) {
+        denom = (denom > 0.0) ? 0.0001 : -0.0001;
+    }
+
+    float sdf = -0.5 * ((PI * 0.5)/denom) + 0.5;
+    return p.x - sdf; //p.x + 0.5(PI/2) * 1/tan(p.y/2 * PI + 1.5))
 }
 
 /////////////////////////////////////////////////////
@@ -331,9 +356,9 @@ float phi(vec2 p){
 //// Otherwise return 0.0.
 /////////////////////////////////////////////////////
 float ground_constraint(vec2 p, float ground_collision_dist){
-    if(phi(p) < ground_collision_dist){
+    if(sdfWaterfall(p) > ground_collision_dist){
         //// Your implementation starts
-        return 0.0;
+        return sdfWaterfall(p) - ground_collision_dist;
         //// Your implementation ends
     }
     else{
@@ -350,11 +375,13 @@ float ground_constraint(vec2 p, float ground_collision_dist){
 vec2 ground_constraint_gradient(vec2 p, float ground_collision_dist){
     // Compute the gradient of the ground constraint with respect to p.
 
-    if(phi(p) < ground_collision_dist){
+    if(sdfWaterfall(p) < ground_collision_dist){ // changed to > from <
         //// Your implementation starts
-
-        return vec2(0.0);
-        
+        // float px = -0.1 * 0.5 * 3.14159265359 * cos(p.x * 0.5 * 3.14159265359);
+        // float py = 1.0;
+        float px = 1.0;
+        float py = -(PI*PI)/8 * 1.0/(sin(PI/2 * p.y + 1.5) * sin(PI/2 * p.y + 1.5));
+        return vec2(px, py);
         //// Your implementation ends
     }
     else{
@@ -376,9 +403,10 @@ void solve_ground_constraint(int i, float ground_collision_dist, float dt){
     float denom = 0.0;
 
     //// Your implementation starts
-    vec2 grad = vec2(0.); // only keep for the sake of the compiler
+    numer = -ground_constraint(particles[i].pos, ground_collision_dist);
 
-
+    vec2 grad = ground_constraint_gradient(particles[i].pos, ground_collision_dist); // only keep for the sake of the compiler
+    denom = particles[i].inv_mass * dot(grad, grad);
     //// Your implementation ends
 
     //PBD if you comment out the following line, which is faster
@@ -405,7 +433,17 @@ void solve_constraints(float dt) {
     // Solve all constraints
 
     //// Your implementation starts
-
+    for (int i = 1; i < n_springs; i++) {
+        solve_spring(springs[i], dt);
+    }
+    for (int i = 1; i < n_particles; i++) {
+        solve_ground_constraint(i, ground_collision_dist, dt);
+    }
+    for (int i = 1; i < n_particles; i++) {
+        for (int j = i + 1; j < n_particles; j++) {
+            solve_collision_constraint(i, j, collision_dist, dt);
+        }
+    }
     
 
     //// Your implementation ends
@@ -422,8 +460,9 @@ float dist_to_segment(vec2 p, vec2 a, vec2 b) {
 
 vec3 render_scene(vec2 pixel_xy) {
     float phi = phi(pixel_xy);
+    float waterfall = sdfWaterfall(pixel_xy);
     vec3 col;
-    if(phi < 0.0) {
+    if(waterfall > 0.0) { // changed to > from <
         col =  vec3(122, 183, 0) / 255.; // ground color
     }
     else{
@@ -451,7 +490,8 @@ vec3 render_scene(vec2 pixel_xy) {
         min_dist = sqrt(min_dist);
 
         const float radius = 0.1;
-        col = mix(col, vec3(180, 164, 105) / 255., remap01(min_dist, radius, radius - pixel_size));
+        // col = mix(col, vec3(180, 164, 105) / 255., remap01(min_dist, radius, radius - pixel_size));
+        col = mix(col, vec3(0, 240, 255) / 255., remap01(min_dist, radius, radius - pixel_size));
     }
     
     // Render All springs
