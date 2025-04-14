@@ -28,8 +28,8 @@ struct Particle {
 
 // Simulation constants
 const float damp = 0.4;
-const float collision_dist = 0.2;
-const float ground_collision_dist = 0.1;
+const float collision_dist = 0.02;
+const float ground_collision_dist = 0.01;
 const vec2 gravity = vec2(0.0, -1);
 
 // Define n_rope rope particles and add one extra "mouse particle".
@@ -81,8 +81,10 @@ Spring add_spring(int a, int b, float inv_stiffness){
 const int initial_particles = 6;
 
 void init_state(void){
-    n_particles = 6;
-    n_springs = 5;
+    const float PI = 3.14159265359;
+
+    n_particles = 7;
+    n_springs = 6;
 
     //particle 0 is the mouse particle and will be set later
     particles[1].pos = vec2(-0.6, 0.5); 
@@ -96,6 +98,9 @@ void init_state(void){
     particles[5].pos = vec2(0.6, 0.5);
     particles[5].vel = vec2(0.0);
 
+    particles[6].pos = vec2(-PI/2. + 0.01, 1.);
+    particles[6].vel = vec2(0.0);
+
     current_add_particle = initial_particles;
 
     // Springs between adjacent rope particles
@@ -104,6 +109,7 @@ void init_state(void){
     springs[2] = add_spring(2, 3, 1.0 / 100.0); // second to third rope particle
     springs[3] = add_spring(3, 4, 1.0 / 100.0); // third to fourth rope particle
     springs[4] = add_spring(4, 5, 1.0 / 100.0); // fourth to fifth rope particle
+    // springs[5] = add_spring(5, 6, 1.0 / 100.0);
 }
 
 
@@ -141,10 +147,10 @@ void load_state() {
         particles[i].inv_mass = 1.0; // all particles have mass 1.0
         particles[i].is_fixed = false;
 
-        if(i==1 || i==5){
-            particles[i].inv_mass = 0.0; // fixed particles at the ends of the rope
-            particles[i].is_fixed = true; // make sure the first and last particles are fixed
-        }
+        // if(i==1 || i==5){
+        //     particles[i].inv_mass = 0.0; // fixed particles at the ends of the rope
+        //     particles[i].is_fixed = true; // make sure the first and last particles are fixed
+        // }
     }
 
     //select nearest particle to mouse
@@ -338,14 +344,7 @@ float phi(vec2 p){
 
 float sdfWaterfall(vec2 p) {
     const float PI = 3.14159265359;
-    float denom = tan(p.y * 0.5 * PI + 1.5);
-
-    if (abs(denom) < 0.0001) {
-        denom = (denom > 0.0) ? 0.0001 : -0.0001;
-    }
-
-    float sdf = -0.5 * ((PI * 0.5)/denom) + 0.5;
-    return p.x - sdf; //p.x + 0.5(PI/2) * 1/tan(p.y/2 * PI + 1.5))
+    return p.y - 0.9 * sin(2. * p.x - PI / 2.);
 }
 
 /////////////////////////////////////////////////////
@@ -356,7 +355,7 @@ float sdfWaterfall(vec2 p) {
 //// Otherwise return 0.0.
 /////////////////////////////////////////////////////
 float ground_constraint(vec2 p, float ground_collision_dist){
-    if(sdfWaterfall(p) > ground_collision_dist){
+    if(sdfWaterfall(p) < ground_collision_dist){
         //// Your implementation starts
         return sdfWaterfall(p) - ground_collision_dist;
         //// Your implementation ends
@@ -374,13 +373,13 @@ float ground_constraint(vec2 p, float ground_collision_dist){
 /////////////////////////////////////////////////////
 vec2 ground_constraint_gradient(vec2 p, float ground_collision_dist){
     // Compute the gradient of the ground constraint with respect to p.
+    const float PI = 3.14159265359;
 
     if(sdfWaterfall(p) < ground_collision_dist){ // changed to > from <
         //// Your implementation starts
         // float px = -0.1 * 0.5 * 3.14159265359 * cos(p.x * 0.5 * 3.14159265359);
-        // float py = 1.0;
-        float px = 1.0;
-        float py = -(PI*PI)/8 * 1.0/(sin(PI/2 * p.y + 1.5) * sin(PI/2 * p.y + 1.5));
+        float py = 1.0;
+        float px = -1.8 * cos(2. * p.x - PI / 2.);
         return vec2(px, py);
         //// Your implementation ends
     }
@@ -444,8 +443,6 @@ void solve_constraints(float dt) {
             solve_collision_constraint(i, j, collision_dist, dt);
         }
     }
-    
-
     //// Your implementation ends
 }
 
@@ -462,8 +459,8 @@ vec3 render_scene(vec2 pixel_xy) {
     float phi = phi(pixel_xy);
     float waterfall = sdfWaterfall(pixel_xy);
     vec3 col;
-    if(waterfall > 0.0) { // changed to > from <
-        col =  vec3(122, 183, 0) / 255.; // ground color
+    if(waterfall < 0.0) { // changed to > from <
+        col =  vec3(122, 183, 80) / 255.; // ground color
     }
     else{
         col = vec3(229, 242, 250) / 255.; // background color
@@ -489,7 +486,7 @@ vec3 render_scene(vec2 pixel_xy) {
         }
         min_dist = sqrt(min_dist);
 
-        const float radius = 0.1;
+        const float radius = 0.01;
         // col = mix(col, vec3(180, 164, 105) / 255., remap01(min_dist, radius, radius - pixel_size));
         col = mix(col, vec3(0, 240, 255) / 255., remap01(min_dist, radius, radius - pixel_size));
     }
@@ -508,7 +505,7 @@ vec3 render_scene(vec2 pixel_xy) {
             min_dist = min(min_dist, dist_to_segment(pixel_xy, particles[a].pos, particles[b].pos));
         }
 
-        const float thickness = 0.01;
+        const float thickness = 0.005;
         
         col = mix(col, vec3(14, 105, 146) / 255., 0.25 * remap01(min_dist, thickness, thickness - pixel_size));
     }
