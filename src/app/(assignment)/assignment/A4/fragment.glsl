@@ -83,33 +83,48 @@ const int initial_particles = 6;
 void init_state(void){
     const float PI = 3.14159265359;
 
-    n_particles = 7;
-    n_springs = 6;
+    n_particles = 8;
+    n_springs = 18;
 
     //particle 0 is the mouse particle and will be set later
-    particles[1].pos = vec2(-0.6, 0.5); 
-    particles[1].vel = vec2(0.0);
-    particles[2].pos = vec2(-0.3, 0.5); 
-    particles[2].vel = vec2(0.0);
-    particles[3].pos = vec2(-0, 0.5);
-    particles[3].vel = vec2(0.0);
-    particles[4].pos = vec2(0.3, 0.5);
-    particles[4].vel = vec2(0.0);
-    particles[5].pos = vec2(0.6, 0.5);
-    particles[5].vel = vec2(0.0);
+    // particles[1].pos = vec2(-0.6, 0.5); 
+    // particles[1].vel = vec2(0.0);
+    // particles[2].pos = vec2(-0.3, 0.5); 
+    // particles[2].vel = vec2(0.0);
+    // particles[3].pos = vec2(-0, 0.5);
+    // particles[3].vel = vec2(0.0);
+    // particles[4].pos = vec2(0.3, 0.5);
+    // particles[4].vel = vec2(0.0);
+    // particles[5].pos = vec2(0.6, 0.5);
+    // particles[5].vel = vec2(0.0);
 
-    particles[6].pos = vec2(-PI/2. + 0.01, 1.);
-    particles[6].vel = vec2(0.0);
+    for (int i = 1; i < 7; i++) {
+        float angle = -float(i - 1) * PI / 5.0;
+        particles[i].pos = vec2(0.2 *cos(angle), 0.1 * sin(angle));
+        particles[i].vel = vec2(0.0);
+        particles[i].inv_mass = 1.0;
+        particles[i].is_fixed = false;
+    }
 
-    current_add_particle = initial_particles;
+    particles[7].pos = vec2(0., 0.2);
 
-    // Springs between adjacent rope particles
-    //spring 0 is the mouse particle to the first rope particle
-    springs[1] = add_spring(1, 2, 1.0 / 100.0); // first to second rope particle
-    springs[2] = add_spring(2, 3, 1.0 / 100.0); // second to third rope particle
-    springs[3] = add_spring(3, 4, 1.0 / 100.0); // third to fourth rope particle
-    springs[4] = add_spring(4, 5, 1.0 / 100.0); // fourth to fifth rope particle
-    // springs[5] = add_spring(5, 6, 1.0 / 100.0);
+    for (int i = 1; i < 7; i++) {
+        int next_i = (i == 6) ? 1 : i + 1;
+        springs[i] = add_spring(i, next_i, 1.0 / 5000.0);
+    }
+
+    springs[7] = add_spring(1, 3, 1.0 / 5000.0);
+    springs[8] = add_spring(2, 4, 1.0 / 5000.0);
+    springs[9] = add_spring(3, 5, 1.0 / 5000.0);
+    springs[10] = add_spring(4, 6, 1.0 / 5000.0);
+    springs[11] = add_spring(5, 1, 1.0 / 5000.0);
+    springs[12] = add_spring(6, 2, 1.0 / 5000.0);
+    springs[13] = add_spring(1, 4, 1.0 / 5000.0);
+    springs[14] = add_spring(2, 5, 1.0 / 5000.0);
+    springs[15] = add_spring(3, 6, 1.0 / 5000.0);
+
+    springs[16] = add_spring(3, 7, 1.0 / 1000.0);
+    springs[17] = add_spring(4, 7, 1.0 / 1000.0);
 }
 
 
@@ -137,7 +152,7 @@ void load_state() {
         particles[mouse_idx].pos = screen_to_xy(iMouse.xy);
         particles[mouse_idx].vel = vec2(0.0);
         particles[mouse_idx].inv_mass = 0.0; // fixed particle
-        particles[mouse_idx].is_fixed = true;
+        particles[mouse_idx].is_fixed = false; // changed to false from true
     }
     // Load other particles
     for (int i = 1; i < n_particles; i++) {
@@ -342,9 +357,11 @@ float phi(vec2 p){
     return p.y - (0.1 * sin(p.x * 0.5 * PI) - 0.5);
 }
 
-float sdfWaterfall(vec2 p) {
+float sdfSea(vec2 p) {
     const float PI = 3.14159265359;
-    return p.y - 0.9 * sin(2. * p.x - PI / 2.);
+    float wave = 0.05 * sin(2.0 * p.x + iTime - PI / 2.0);
+    float wave2 = 0.015 * sin(10.0 * p.x + 3.0 * iTime);
+    return p.y - wave - wave2 + 0.2;
 }
 
 /////////////////////////////////////////////////////
@@ -355,9 +372,9 @@ float sdfWaterfall(vec2 p) {
 //// Otherwise return 0.0.
 /////////////////////////////////////////////////////
 float ground_constraint(vec2 p, float ground_collision_dist){
-    if(sdfWaterfall(p) < ground_collision_dist){
+    if(sdfSea(p) < ground_collision_dist){
         //// Your implementation starts
-        return sdfWaterfall(p) - ground_collision_dist;
+        return sdfSea(p) - ground_collision_dist;
         //// Your implementation ends
     }
     else{
@@ -375,7 +392,7 @@ vec2 ground_constraint_gradient(vec2 p, float ground_collision_dist){
     // Compute the gradient of the ground constraint with respect to p.
     const float PI = 3.14159265359;
 
-    if(sdfWaterfall(p) < ground_collision_dist){ // changed to > from <
+    if(sdfSea(p) < ground_collision_dist){ // changed to > from <
         //// Your implementation starts
         // float px = -0.1 * 0.5 * 3.14159265359 * cos(p.x * 0.5 * 3.14159265359);
         float py = 1.0;
@@ -457,10 +474,10 @@ float dist_to_segment(vec2 p, vec2 a, vec2 b) {
 
 vec3 render_scene(vec2 pixel_xy) {
     float phi = phi(pixel_xy);
-    float waterfall = sdfWaterfall(pixel_xy);
+    float sea = sdfSea(pixel_xy);
     vec3 col;
-    if(waterfall < 0.0) { // changed to > from <
-        col =  vec3(122, 183, 80) / 255.; // ground color
+    if(sea < 0.0) {
+        col = vec3(0, 105, 148) / 255.; // ground color
     }
     else{
         col = vec3(229, 242, 250) / 255.; // background color
@@ -488,7 +505,7 @@ vec3 render_scene(vec2 pixel_xy) {
 
         const float radius = 0.01;
         // col = mix(col, vec3(180, 164, 105) / 255., remap01(min_dist, radius, radius - pixel_size));
-        col = mix(col, vec3(0, 240, 255) / 255., remap01(min_dist, radius, radius - pixel_size));
+        col = mix(col, vec3(255, 0, 0) / 255., remap01(min_dist, radius, radius - pixel_size));
     }
     
     // Render All springs
@@ -507,7 +524,8 @@ vec3 render_scene(vec2 pixel_xy) {
 
         const float thickness = 0.005;
         
-        col = mix(col, vec3(14, 105, 146) / 255., 0.25 * remap01(min_dist, thickness, thickness - pixel_size));
+        // col = mix(col, vec3(14, 105, 146) / 255., 0.25 * remap01(min_dist, thickness, thickness - pixel_size));
+        col = mix(col, vec3(255, 80, 0) / 255., 0.25 * remap01(min_dist, thickness, thickness - pixel_size));
     }
 
     // col.z = 1.0;
