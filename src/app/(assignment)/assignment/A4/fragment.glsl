@@ -98,6 +98,12 @@ void init_state(void){
     // particles[5].pos = vec2(0.6, 0.5);
     // particles[5].vel = vec2(0.0);
 
+    // springs[1] = add_spring(1, 2, 1.0 / 1000.0);
+    // springs[2] = add_spring(2, 3, 1.0 / 1000.0);
+    // springs[3] = add_spring(3, 4, 1.0 / 1000.0);
+    // springs[4] = add_spring(4, 5, 1.0 / 1000.0);
+    // springs[5] = add_spring(5, 1, 1.0 / 1000.0);
+
     for (int i = 1; i < 7; i++) {
         float angle = -float(i - 1) * PI / 5.0;
         particles[i].pos = vec2(0.2 *cos(angle), 0.1 * sin(angle));
@@ -152,7 +158,7 @@ void load_state() {
         particles[mouse_idx].pos = screen_to_xy(iMouse.xy);
         particles[mouse_idx].vel = vec2(0.0);
         particles[mouse_idx].inv_mass = 0.0; // fixed particle
-        particles[mouse_idx].is_fixed = false; // changed to false from true
+        particles[mouse_idx].is_fixed = true;
     }
     // Load other particles
     for (int i = 1; i < n_particles; i++) {
@@ -396,7 +402,7 @@ vec2 ground_constraint_gradient(vec2 p, float ground_collision_dist){
         //// Your implementation starts
         // float px = -0.1 * 0.5 * 3.14159265359 * cos(p.x * 0.5 * 3.14159265359);
         float py = 1.0;
-        float px = -1.8 * cos(2. * p.x - PI / 2.);
+        float px = -0.1 * cos(2. * p.x + iTime - PI / 2.) - 0.15 * cos(10.0 * p.x + 3.0 * iTime);
         return vec2(px, py);
         //// Your implementation ends
     }
