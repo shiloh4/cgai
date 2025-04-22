@@ -29,11 +29,8 @@ vec3 palette(in float t)
   vec3 b = vec3(0.5, 0.5, 0.5);
   vec3 c = vec3(1.0, 1.0, 1.0);
   vec3 d = vec3(0.0, 0.25, 0.25);
-//   vec3 d = vec3(0.0, 0.10, 0.20);
-
 
   vec3 color = a + b * cos(6.28318 * (c * t + d));
-//   color = (color - 0.5) * 2.2 + 0.5; // add contrast
   return color;
 
 }
@@ -475,40 +472,6 @@ float sdfAmogus(vec3 p)
 }
 
 // https://iquilezles.org/articles/mandelbulb/
-// float mandelbulb(vec3 p)
-// {
-//     float power = 8.0 + sin(iTime) * 2.0;       // fractal power -- the higher, the more complex the fractal
-//     int iterations = 20;
-//     float bailout = 2.0;     // bailout radius -- the distance at which we consider the point to have escaped to infinity
-//     float dr = 1.0;        // differential radius for normal estimation
-//     float r = length(p);   // curr radius
-    
-//     vec3 z = p;
-//     for (int i = 0; i < iterations; i++) {
-//         r = length(z);
-//         if (r > bailout) // r > bailout ? assume orbit escapes to infinity
-//             break;
-        
-//         // Convert to spherical coordinates
-//         float theta = acos(z.z / r); // polar angle from +ve z-axis
-//         float phi = atan(z.y, z.x); // azimuth angle in xy plane, from +ve x-axis
-        
-//         // Scale and rotate the point
-//         dr = pow(r, power - 1.0) * power * dr + 1.0;
-//         float zr = pow(r, power);
-//         theta *= power;
-//         phi *= power;
-        
-//         // Convert back to Cartesian coordinates
-//         z = zr * vec3(sin(theta) * cos(phi),
-//                       sin(theta) * sin(phi),
-//                       cos(theta));
-//         z += p;
-//     }
-    
-//     return 0.5 * log(r) * r / dr; // distance estimator -- estimate distance of p from the fractal
-// }
-
 vec2 mandelbulb(vec3 p)
 {
     float power = 8.0 + sin(iTime) * 2.0;
@@ -543,45 +506,75 @@ vec2 mandelbulb(vec3 p)
 
 vec2 mandelbulb2(vec3 p) {
     // -- parameters for this variant --
-    float power    = 6.0 + sin(iTime * 0.7) * 4.0;  // dynamic power
-    int   iterations = 25;
-    float bailout  = 4.0;       // larger escape radius
-    float dr       = 1.0;
-    vec3  z        = p;
-    float r        = 0.0;
-    int   i;
+    float power = 6.0 + sin(iTime * 0.7) * 2.0;
+    int iterations = 20;
+    float bailout = 4.0;
+    float dr = 1.0;
+    vec3 z = p;
+    float r = 0.0;
+    int i;
 
     for (i = 0; i < iterations; i++) {
         r = length(z);
         if (r > bailout) break;
 
-        // spherical coords
         float theta = acos(z.z / r);
         float phi   = atan(z.y, z.x);
-
-        // add a little twist each frame
         phi += sin(r * 0.5 + iTime) * 0.5;
 
-        // update derivative of radius
         dr = pow(r, power - 1.0) * power * dr + 1.0;
-
-        // radius to the 'power'
         float zr = pow(r, power);
 
-        // cross‑bulb mapping with absolute sine
         z = zr * vec3(
             abs(sin(power * theta)) * cos(power * phi),
             abs(sin(power * theta)) * sin(power * phi),
             cos(power * theta)
         );
 
-        // re‑add the original point (scaled slightly)
-        z += p * 0.9;
+        z += p;
     }
 
     // return (distance estimate, # iterations)
     return vec2(0.5 * log(r) * r / dr, float(i));
 }
+
+vec2 mandelbulb3(vec3 p) {
+    // --- parameters for variation #3 ---
+    float power      = 5.0 + cos(iTime * 1.2);  // ebb & flow of fractal power
+    int   iterations = 20;
+    float bailout    = 3.5;
+    float dr         = 1.0;
+    vec3  z          = p;
+    float r          = 0.0;
+    int   i;
+
+    for (i = 0; i < iterations; i++) {
+        r = length(z);
+        if (r > bailout) break;
+
+        float theta = acos(clamp(z.z / r, -1.0, 1.0));
+        float phi   = atan(z.y, z.x);
+
+        dr = pow(r, power - 1.0) * power * dr + 1.0;
+        float zr = pow(r, power);
+
+        // float ripple = sin(r * 4.0 + iTime) * 0.1;
+        // zr += ripple;
+
+        z = zr * vec3(
+            sin(power * theta) * cos(power * phi),
+            sin(power * theta) * sin(power * phi),
+            cos(power * theta)
+        );
+
+        // 7) Feed back the original point (scaled)
+        z += p * 0.7;
+    }
+
+    // distance estimate, plus how many iters we did
+    return vec2(0.5 * log(r) * r / dr, float(i));
+}
+
 
 
 float sdfUnion(float d1, float d2)
@@ -607,76 +600,44 @@ vec2 sdf(vec3 p)
     //// your implementation starts
     float plane = sdfPlane(p, plane_h);
 
-    // float bunny = sdfBunny(p - vec3(-1.0, 1., 4.));
-    // float cow = sdfCow(p - vec3(1.0, 1., 4.));
+    // centre
     float mandel = mandelbulb2(rotate(p - vec3(0.0, 1., 5.), vec3(0.0, 0.0, 1.), 0.25 * iTime)).x;
+
+    // first orbit
     float mandel2 = mandelbulb(rotate(p - vec3(-2.0 * cos(iTime * 0.5), 1.0 + 2.0 * sin(iTime * 0.5), 5.0), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), -0.25 * iTime)).x;
     float mandel3 = mandelbulb(rotate(p - vec3(2.0 * cos(iTime * 0.5), 1.0 - 2.0 * sin(iTime * 0.5), 5.0), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), -0.25 * iTime)).x;
     float mandel4 = mandelbulb(rotate(p - vec3(-2.0 * cos(iTime * 0.5), 1.0 - 2.0 * sin(iTime * 0.5), 5.0), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), 0.25 * iTime)).x;
     float mandel5 = mandelbulb(rotate(p - vec3(2.0 * cos(iTime * 0.5), 1.0 + 2.0 * sin(iTime * 0.5), 5.0), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), 0.25 * iTime)).x;
-    // float mandelbulb = mandelbulb((p - vec3(0.0, 1.0, 5.0))).x;
 
-    // s = plane;
+    // second orbit
+    float mandel6 = mandelbulb3(rotate(p - vec3(3.0 * cos(iTime * 0.2), 1.0, 5.0 + 3.0 * sin(iTime * 0.2)), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), 0.25 * iTime)).x;
+    float mandel7 = mandelbulb3(rotate(p - vec3(-3.0 * cos(iTime * 0.2), 1.0, 5.0 + 3.0 * sin(iTime * 0.2)), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), 0.25 * iTime)).x;
+
     s = mandel;
-    float matID = 1.0;
+    float matID = 2.0;
 
-    // if (bunny < s) {
-    //     s = bunny;
-    //     matID = 2.0;
-    // } 
-    // if (cow < s) {
-    //     s = cow;
-    //     matID = 3.0;
-    // } 
     if (mandel2 < s) {
         s = mandel2;
-        matID = 2.0;
     }
     if (mandel3 < s) {
         s = mandel3;
-        matID = 2.0;
     }
     if (mandel4 < s) {
         s = mandel4;
-        matID = 2.0;
     }
     if (mandel5 < s) {
         s = mandel5;
-        matID = 2.0;
+    }
+    if (mandel6 < s) {
+        s = mandel6;
+    }
+    if (mandel7 < s) {
+        s = mandel7;
     }
     //// your implementation ends
 
     return vec2(s, matID);
 }
-
-// vec2 sdf2(vec3 p)
-// {
-//     float s = 0.;
-
-//     float plane_h = -0.1;
-
-//     float plane = sdfPlane(p, plane_h);
-
-//     vec3 amongusPos = p - vec3(sin(iTime), 0.8, 4.0);
-//     amongusPos = rotate(amongusPos, vec3(0, 1, 0), iTime);
-//     float amongus = sdfAmogus(amongusPos);
-
-//     vec3 amongusPos2 = p - vec3(-sin(iTime), 0.8, 4.0);
-//     amongusPos2 = rotate(amongusPos2, vec3(0, 1, 0), iTime);
-//     float amongus2 = sdfAmogus(amongusPos2);
-
-//     float composite = sdfSmoothUnion(amongus, amongus2, 0.02);
-
-//     s = composite;
-//     float matID = 4.0;
-
-//     if (plane < s) {
-//         s = plane;
-//         matID = 1.0;
-//     }
-
-//     return vec2(s, matID);
-// }
 
 /////////////////////////////////////////////////////
 //// ray marching
@@ -750,7 +711,7 @@ vec3 phong_shading(vec3 p, vec3 n, float matID)
     //// background
     if(p.z > 20.0)
     {
-        vec3 color = vec3(0.04, 0.16, 0.33);
+        vec3 color = vec3(0.5);
         return color;
     }
 
@@ -782,9 +743,16 @@ vec3 phong_shading(vec3 p, vec3 n, float matID)
         float normalized = -iterations / 20.0;
         color = palette(normalized + iTime * 0.1);
     } else if (matID == 2.0) {
-        float normalized = iterations / 20.0;
-        color = palette(normalized + iTime * 0.1);
+        // float normalized = iterations / 20.0;
+        // color = palette(normalized + iTime * 0.1);
         // color = vec3(1.0, 0.2, 0.2);
+
+        float t = iterations / 20.;
+        t += iTime + 0.05;
+        t = fract(t);
+
+        color = palette(t);
+        color *= 0.8 + 0.2 * dot(n, normalize(vec3(1,1,1))); 
     }
     //// your implementation ends
 
