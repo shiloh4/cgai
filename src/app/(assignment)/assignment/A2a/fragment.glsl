@@ -127,7 +127,7 @@ vec4 readSDFVolume(vec3 p)
     //// convert sdf value to a color
 
     //// your implementation starts
-    vec3 color = palette(-distance);
+    vec3 
     if (distance < 0.0) {
         return vec4(color, 1.0);
     } else {
