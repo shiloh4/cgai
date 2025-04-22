@@ -51,12 +51,12 @@ export default function TestPage() {
   const [volumeData, setVolumeData] = useState<Uint8Array | null>(null);
   useEffect(() => {
     // Define the fixed path to the file
-    const fixedPath = '/foot_256x256x256_uint8.raw'; // Replace with the actual path
+    // const fixedPath = '/foot_256x256x256_uint8.raw'; // Replace with the actual path
     // const fixedPath = '/tooth_103x94x161_uint8.raw';
     // const fixedPath = '/christmas_tree_512x499x512_uint16.raw';
     // const fixedPath = '/neghip_64x64x64_uint8.raw';
     // const fixedPath = '/bonsai_256x256x256_uint8.raw';
-    // const fixedPath = '';
+    const fixedPath = '';
 
     const fetchVolumeData = async () => {
       try {
