@@ -566,11 +566,15 @@ vec2 sdf(vec3 p)
 
     // float bunny = sdfBunny(p - vec3(-1.0, 1., 4.));
     // float cow = sdfCow(p - vec3(1.0, 1., 4.));
-    float mandelbulb = mandelbulb(rotate(p - vec3(0.0, 1.0, 5.0), vec3(0.0, 0.0, 1.0), 0.25 * iTime)).x;
+    float mandel = mandelbulb(rotate(p - vec3(0.0, 1.0, 5.0), vec3(0.0, 0.0, 1.0), 0.25 * iTime)).x;
+    float mandel2 = mandelbulb(rotate(p - vec3(-2.0 * cos(iTime * 0.5), 1.0 + 2.0 * sin(iTime * 0.5), 5.0), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), -0.25 * iTime)).x;
+    float mandel3 = mandelbulb(rotate(p - vec3(2.0 * cos(iTime * 0.5), 1.0 - 2.0 * sin(iTime * 0.5), 5.0), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), -0.25 * iTime)).x;
+    float mandel4 = mandelbulb(rotate(p - vec3(-2.0 * cos(iTime * 0.5), 1.0 - 2.0 * sin(iTime * 0.5), 5.0), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), 0.25 * iTime)).x;
+    float mandel5 = mandelbulb(rotate(p - vec3(2.0 * cos(iTime * 0.5), 1.0 + 2.0 * sin(iTime * 0.5), 5.0), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), 0.25 * iTime)).x;
     // float mandelbulb = mandelbulb((p - vec3(0.0, 1.0, 5.0))).x;
 
     // s = plane;
-    s = mandelbulb;
+    s = mandel;
     float matID = 4.0;
 
     // if (bunny < s) {
@@ -581,10 +585,18 @@ vec2 sdf(vec3 p)
     //     s = cow;
     //     matID = 3.0;
     // } 
-    // if (mandelbulb < s) {
-        
-        // matID = 4.0;
-    // }
+    if (mandel2 < s) {
+        s = mandel2;
+    }
+    if (mandel3 < s) {
+        s = mandel3;
+    }
+    if (mandel4 < s) {
+        s = mandel4;
+    }
+    if (mandel5 < s) {
+        s = mandel5;
+    }
     //// your implementation ends
 
     return vec2(s, matID);
@@ -724,13 +736,13 @@ vec3 phong_shading(vec3 p, vec3 n, float matID)
         color = vec3(0.0, 1.0, 0.0);
     } else if (matID == 4.0) {
         vec3 animatedP = rotate(p, vec3(0.0, 1.0, 0.0), iTime);
-    vec2 mandel = mandelbulb(animatedP - vec3(0.0, 1.0, 4.0));
-    float distance = mandel.x;
-    float iterations = mandel.y;
-    
-    // Normalize iterations to 0-1 range for palette lookup
-    float normalized = iterations / 20.0;
-    color = palette(normalized + iTime * 0.1);
+        vec2 mandel = mandelbulb(animatedP - vec3(0.0, 1.0, 4.0));
+        float distance = mandel.x;
+        float iterations = mandel.y;
+
+        // Normalize iterations to 0-1 range for palette lookup
+        float normalized = iterations / 20.0;
+        color = palette(normalized + iTime * 0.1);
         // color = vec3(1.0, 0.2, 0.2);
     }
     //// your implementation ends
@@ -745,8 +757,10 @@ vec3 phong_shading(vec3 p, vec3 n, float matID)
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
 {
     vec2 uv = (fragCoord.xy - .5 * iResolution.xy) / iResolution.y;         //// screen uv
-    vec3 origin = CAM_POS;                                                  //// camera position 
+    // vec3 origin = rotate(CAM_POS, vec3(0., 0., 1.), 0.5 * iTime);                                                  //// camera position 
+    vec3 origin = CAM_POS;
     vec3 dir = normalize(vec3(uv.x, uv.y, 1));                              //// camera direction
+    dir = rotate(dir, vec3(0., 0., 1.), 0.3 * iTime);
     vec2 s = rayMarching(origin, dir);                                     //// ray marching
     vec3 p = origin + dir * s.x;                                              //// ray-sdf intersection
     vec3 n = normal(p);                                                     //// sdf normal
