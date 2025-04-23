@@ -117,13 +117,11 @@ vec2 mandelbulb2(vec3 p) {
         z += p;
     }
 
-    // return (distance estimate, # iterations)
     return vec2(0.5 * log(r) * r / dr, float(i));
 }
 
 vec2 mandelbulb3(vec3 p) {
-    // --- parameters for variation #3 ---
-    float power      = 5.0 + cos(iTime * 1.2);  // ebb & flow of fractal power
+    float power      = 5.0 + cos(iTime * 1.2); 
     int   iterations = 20;
     float bailout    = 3.5;
     float dr         = 1.0;
@@ -193,12 +191,16 @@ float sdf(vec3 p)
     // second orbit
     float mandel6 = mandelbulb3(rotate(p - vec3(3.0 * cos(iTime * 0.2), 1.0, 5.0 + 3.0 * sin(iTime * 0.2)), vec3(0.0, 1./sqrt(2.), 1./sqrt(2.)), 0.25 * iTime)).x;
     float mandel7 = mandelbulb3(rotate(p - vec3(-3.0 * cos(iTime * 0.2), 1.0, 5.0 + 3.0 * sin(iTime * 0.2)), vec3(1./sqrt(2.), 0., 1./sqrt(2.)), 0.25 * iTime)).x;
-    float composite = sdfSmoothUnion(mandel2, mandel3, 0.005);
-    composite = sdfSmoothUnion(composite, mandel4, 0.005);
-    composite = sdfSmoothUnion(composite, mandel5, 0.005);
-    composite = sdfSmoothUnion(composite, mandel6, 0.005);
-    composite = sdfSmoothUnion(composite, mandel7, 0.005);
-
+    float mandel8 = mandelbulb(rotate(p - vec3(-4.0, 1.0, 5.0), vec3(0., 0., 1.), -1. * 0.3 * iTime)).x;
+    float mandel9 = mandelbulb(rotate(p - vec3(4.0, 1.0, 5.0), vec3(0., 0., 1.), -1. * 0.3 * iTime)).x;
+    float composite = sdfUnion(mandel2, mandel3);
+    composite = sdfUnion(composite, mandel4);
+    composite = sdfUnion(composite, mandel5);
+    composite = sdfUnion(composite, mandel6);
+    composite = sdfUnion(composite, mandel7);
+    composite = sdfUnion(composite, mandel8);
+    composite = sdfUnion(composite, mandel9);
+    
     s = mandel;
 
     // if (mandel2 < s) {
@@ -221,6 +223,12 @@ float sdf(vec3 p)
     }
     if (mandel7 < s) {
         s = mandel7;
+    }
+    if (mandel8 < s) {
+        s = mandel8;
+    }
+    if (mandel9 < s) {
+        s = mandel9;
     }
     //// your implementation ends
 
@@ -294,13 +302,59 @@ vec3 normal(vec3 p)
 //// Each object must have a separate color without mixing.
 //// Notice that we have implemented the default Phong shading model for you.
 /////////////////////////////////////////////////////
+// New helper function for generating psychedelic colors
+// You can tweak the parameters (freq, amp, shift, offsets) for different results!
+vec3 psychedelicPalette( float t, vec3 pos, vec3 normal, float time ) {
+    // --- Modulations based on position, normal, time ---
+    // Frequency and amplitude control the complexity/speed of swirls
+    float pos_freq = 2.5;
+    float time_freq = 0.4;
+    float normal_amp = 1.5;
+    float pos_amp = 0.15;
+
+    // combine position and time for base swirling value
+    float swirl = sin(pos.x * pos_freq + time * time_freq) *
+                  cos(pos.y * pos_freq - time * time_freq * 0.7) *
+                  sin(pos.z * pos_freq + time * time_freq * 1.3);
+
+    // Modulate based on surface normal direction relative to a cycling vector
+    vec3 dir_vector = normalize(vec3(sin(time*0.3), cos(time*0.3), 0.5));
+    float normal_mod = dot(normal, dir_vector) * 0.5 + 0.5; // range [0, 1]
+
+    // Combine base input 't' with modulations
+    // Adding noise for finer details
+    float noise = fract(sin(dot(pos, vec3(12.9898, 78.233, 53.546))) * 43758.5453);
+    float modulated_t = t + swirl * pos_amp + normal_mod * normal_amp + noise * 0.05;
+
+    // --- Generate Color using multiple cosines ---
+    // Use different frequencies and phase shifts for each color channel
+    // This creates complex gradients and color combinations
+    vec3 color = vec3(
+        0.5 + 0.5 * cos(6.28318 * (modulated_t * 1.0 + 0.0)), // Red channel
+        0.5 + 0.5 * cos(6.28318 * (modulated_t * 1.2 + 0.3)), // Green channel
+        0.5 + 0.5 * cos(6.28318 * (modulated_t * 0.9 + 0.6))  // Blue channel
+    );
+
+    // // --- Optional: Add subtle Fresnel effect for glow at edges ---
+    vec3 eyeDir = normalize(CAM_POS - pos);
+    // // Increase power for sharper Fresnel effect
+    float fresnel = pow(1.0 - max(dot(eyeDir, normal), 0.0), 4.0);
+    // Mix with a bright color like white or yellow
+    color = mix(color, vec3(1.0, 1.0, 0.9), fresnel * 0.4);
+
+    return color;
+}
+
+
+/////////////////////////////////////////////////////
+//// Phong shading (Revised for Psychedelic Colors)
+/////////////////////////////////////////////////////
 vec3 phong_shading(vec3 p, vec3 n)
 {
-    //// background
-    if(p.z > 20.0)
+
+    if(length(p -CAM_POS) > 99.0)
     {
-        vec3 color = vec3(0.5);
-        return color;
+        return vec3(0.6, 0.6, 0.6); 
     }
 
     //// phong shading
@@ -311,35 +365,102 @@ vec3 phong_shading(vec3 p, vec3 n)
     vec3 eye = CAM_POS;
     float spec = pow(max(dot(reflect(-l, n), normalize(eye - p)), 0.0), 128.0) * 0.9;
 
-    vec3 sunDir = normalize(vec3(0, 1, -1)); //// parallel light direction
-    float sunDif = max(dot(n, sunDir), 0.) * 0.2;
+    vec3 sunDir = normalize(vec3(0., 1., -1.));
+    float sunDif = max(dot(n, sunDir), 0.0) * 0.2;
 
     //// shadow
     float s = rayMarching(p + n * 0.02, l);
     if(s < length(lightPos - p))
         dif *= .2;
 
-    vec3 color = vec3(1.0);
 
-    //// your implementation starts
-    vec3 animatedP = rotate(p, vec3(0.0, 1.0, 0.0), iTime);
-    vec2 mandel = mandelbulb(animatedP - vec3(0.0, 1.0, 4.0));
-    float distance = mandel.x;
-    float iterations = mandel.y;
+    //// Psychedelic Coloring Implementation ////
 
-    float t = iterations / 20.;
-    t += iTime + 0.05;
-    t = fract(t);
+    // --- Base Value for Palette ---
+    // We'll primarily use position and time, but try to add iteration influence.
+    // Problem: We don't know the exact iteration count for point 'p' from sdf().
+    // Approximation: Calculate it for the *closest* mandelbulb type at 'p'.
+    // This requires checking distances or re-running parts of sdf().
 
-    // color = palette(t);
-    // color *= 0.8 + 0.2 * dot(n, normalize(vec3(1,1,1))); 
-    float band = smoothstep(0.2, 0.25, fract(iterations/20.*10. + iTime*0.2));
-    vec3 banded = mix(palette(fract(t+0.3)), palette(fract(t-0.3)), band);
-    color = banded;
-    //// your implementation ends
+    // Let's try calculating for mandelbulb2 (the central one) as a proxy.
+    // transform 'p' into the local space of mandelbulb2
+    vec3 p_relative_m2 = p - vec3(0.0, 1., 5.);
+    vec3 p_local_m2 = rotate(p_relative_m2, vec3(0.0, 0.0, -1.0), 0.25 * iTime); // Inverse rotation
+    vec2 m2_info = mandelbulb2(p_local_m2);
+    float iterations = m2_info.y; // Iteration count (proxy)
+    float distance_est = m2_info.x; // Distance estimate (proxy)
 
-    return (amb + dif + spec + sunDif) * color;
+    // --- Create Input for psychedelicPalette ---
+    // Normalize iteration count (use max iterations from mandelbulb2)
+    float iter_norm = clamp(iterations / 20.0, 0.0, 1.0);
+
+    // Combine normalized iterations, time, and maybe distance estimate
+    // Using fract ensures the value cycles, good for palettes
+    float colorInput = fract(iter_norm * 1.5 + iTime * 0.15);
+
+    // If the point likely escaped (max iterations), use position instead for variation
+    if (iterations >= 19.5) {
+         colorInput = fract(length(p)*0.1 + iTime*0.1);
+    }
+
+    // --- Get the Psychedelic Color ---
+    vec3 baseColor = psychedelicPalette(colorInput, p, n, iTime);
+
+    // --- Optional: Enhance color based on distance estimate (Glow) ---
+    // Make points very close to the theoretical surface brighter/different color
+    float glowFactor = smoothstep(0.005, 0.0, distance_est); // Adjust 0.005 for glow size
+    // Mix with a bright emissive color
+    baseColor = mix(baseColor, vec3(1.0, 0.9, 0.5) * 1.5, glowFactor * 0.6);
+
+
+    return (amb + sunDif + dif + spec) * baseColor;
 }
+// vec3 phong_shading(vec3 p, vec3 n)
+// {
+//     //// background
+//     if(p.z > 20.0)
+//     {
+//         vec3 color = vec3(0.5);
+//         return color;
+//     }
+
+//     //// phong shading
+//     vec3 lightPos = vec3(4. * sin(iTime), 4., 4. * cos(iTime));
+//     vec3 l = normalize(lightPos - p);
+//     float amb = 0.1;
+//     float dif = max(dot(n, l), 0.) * 0.7;
+//     vec3 eye = CAM_POS;
+//     float spec = pow(max(dot(reflect(-l, n), normalize(eye - p)), 0.0), 128.0) * 0.9;
+
+//     vec3 sunDir = normalize(vec3(0, 1, -1)); //// parallel light direction
+//     float sunDif = max(dot(n, sunDir), 0.) * 0.2;
+
+//     //// shadow
+//     float s = rayMarching(p + n * 0.02, l);
+//     if(s < length(lightPos - p))
+//         dif *= .2;
+
+//     vec3 color = vec3(1.0);
+
+//     //// your implementation starts
+//     vec3 animatedP = rotate(p, vec3(0.0, 1.0, 0.0), iTime);
+//     vec2 mandel = mandelbulb(animatedP - vec3(0.0, 1.0, 4.0));
+//     float distance = mandel.x;
+//     float iterations = mandel.y;
+
+//     float t = iterations / 20.;
+//     t += iTime + 0.05;
+//     t = fract(t);
+
+//     // color = palette(t);
+//     // color *= 0.8 + 0.2 * dot(n, normalize(vec3(1,1,1))); 
+//     float band = smoothstep(0.2, 0.25, fract(iterations/20.*10. + iTime*0.2));
+//     vec3 banded = mix(palette(fract(t+0.3)), palette(fract(t-0.3)), band);
+//     color = banded;
+//     //// your implementation ends
+
+//     return (amb + dif + spec + sunDif) * color;
+// }
 
 /////////////////////////////////////////////////////
 //// main function
@@ -351,7 +472,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
     // vec3 origin = rotate(CAM_POS, vec3(0., 0., 1.), 0.5 * iTime);                                                  //// camera position 
     vec3 origin = CAM_POS;
     vec3 dir = normalize(vec3(uv.x, uv.y, 1));                              //// camera direction
-    dir = rotate(dir, vec3(0., 0., 1.), 0.3 * iTime);
+    dir = rotate(dir, vec3(0., 0., 1.), sin(0.3 * iTime));                  //// camera rotation    
     float s = rayMarching(origin, dir);                                     //// ray marching
     vec3 p = origin + dir * s;                                              //// ray-sdf intersection
     vec3 n = normal(p);                                                     //// sdf normal
