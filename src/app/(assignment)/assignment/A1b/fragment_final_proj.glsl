@@ -44,17 +44,17 @@ float sdfPlane(vec3 p, float h)
 //// You should replace the default implementation (a sphere) with your own network weights. 
 /////////////////////////////////////////////////////
 // https://iquilezles.org/articles/mandelbulb/
-vec2 mandelbulb(vec3 p)
-{
+vec2 mandelbulb(vec3 p) {
     float power = 8.0 + sin(iTime) * 2.0;
     int iterations = 20;
     float bailout = 2.0;
     float dr = 1.0;
-    float r = length(p);
+    float r;
     
     vec3 z = p;
     int i;
     for (i = 0; i < iterations; i++) {
+        r = length(z);
         if (r > bailout)
             break;
         
@@ -78,18 +78,18 @@ vec2 mandelbulb(vec3 p)
 vec2 mandelbulb2(vec3 p) {
     float power = 6.0 + sin(iTime * 0.7) * 2.0;
     int iterations = 20;
-    float bailout = 4.0;
+    float bailout = 2.0;
     float dr = 1.0;
-    vec3 z = p;
     float r = 0.0;
-    int i;
 
+    vec3 z = p;
+    int i;
     for (i = 0; i < iterations; i++) {
         r = length(z);
         if (r > bailout) break;
 
         float theta = acos(z.z / r);
-        float phi   = atan(z.y, z.x);
+        float phi = atan(z.y, z.x);
         phi += sin(r * 0.5 + iTime) * 0.5;
 
         dr = pow(r, power - 1.0) * power * dr + 1.0;
@@ -108,38 +108,33 @@ vec2 mandelbulb2(vec3 p) {
 }
 
 vec2 mandelbulb3(vec3 p) {
-    float power      = 5.0 + cos(iTime * 1.2); 
-    int   iterations = 20;
-    float bailout    = 3.5;
-    float dr         = 1.0;
-    vec3  z          = p;
-    float r          = 0.0;
-    int   i;
+    float power = 12.0 + 5.*cos(iTime * 0.8); 
+    int iterations = 20;
+    float bailout = 2.0;
+    float dr = 1.0;
+    float r = 0.0;
 
+    vec3 z = p;
+    int i;
     for (i = 0; i < iterations; i++) {
         r = length(z);
         if (r > bailout) break;
 
         float theta = acos(clamp(z.z / r, -1.0, 1.0));
-        float phi   = atan(z.y, z.x);
+        float phi = atan(z.y, z.x);
 
         dr = pow(r, power - 1.0) * power * dr + 1.0;
         float zr = pow(r, power);
 
-        // float ripple = sin(r * 4.0 + iTime) * 0.1;
-        // zr += ripple;
-
         z = zr * vec3(
-            sin(power * theta) * cos(power * phi),
-            sin(power * theta) * sin(power * phi),
+            sin(power * theta) * abs(cos(power * phi)),
+            sin(power * theta) * abs(sin(power * phi)),
             cos(power * theta)
         );
 
-        // 7) Feed back the original point (scaled)
-        z += p * 0.7;
+        z += p;
     }
 
-    // distance estimate, plus how many iters we did
     return vec2(0.5 * log(r) * r / dr, float(i));
 }
 
@@ -190,32 +185,8 @@ float sdf(vec3 p)
     
     s = mandel;
 
-    // if (mandel2 < s) {
-    //     s = mandel2;
-    // }
-    // if (mandel3 < s) {
-    //     s = mandel3;
-    // }
-    // if (mandel4 < s) {
-    //     s = mandel4;
-    // }
-    // if (mandel5 < s) {
-    //     s = mandel5;
-    // }
     if (composite < s) {
         s = composite;
-    }
-    if (mandel6 < s) {
-        s = mandel6;
-    }
-    if (mandel7 < s) {
-        s = mandel7;
-    }
-    if (mandel8 < s) {
-        s = mandel8;
-    }
-    if (mandel9 < s) {
-        s = mandel9;
     }
     //// your implementation ends
 
@@ -295,12 +266,10 @@ vec3 palette(float t, vec3 pos, vec3 normal, float time) {
     float normal_amp = 1.5;
     float pos_amp = 0.15;
 
-    // combine position, time for base swirling value
     float swirl = sin(pos.x * pos_freq + time * time_freq) *
                   cos(pos.y * pos_freq - time * time_freq * 0.7) *
                   sin(pos.z * pos_freq + time * time_freq * 1.3);
 
-    // modulate based on surface normal direction relative to cycling vector
     vec3 dir_vector = normalize(vec3(sin(time*0.3), cos(time*0.3), 0.5));
     float normal_mod = dot(normal, dir_vector) * 0.5 + 0.5;
 
@@ -357,6 +326,7 @@ vec3 phong_shading(vec3 p, vec3 n)
     vec3 color = palette(inputP, p, n, iTime);
     float glowFactor = smoothstep(0.005, 0.0, distance_est);
     color = mix(color, vec3(1.0, 0.9, 0.5), glowFactor);
+    //// your implementation ends
 
     return (amb + sunDif + dif + spec) * color;
 }
